@@ -16,6 +16,7 @@ namespace SFMLTest2
         public static RenderWindow window;
         public static View view;
 
+        //TODO remove mouse and player loading and put it in SpriteManager
         public static Texture mouse_tex = new Texture("../../Content/Mouse.png");
         public static Sprite mouse_sprite;
 
