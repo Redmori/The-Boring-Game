@@ -10,7 +10,7 @@ namespace SFMLTest2
 {
     class Program
     {
-        public static bool debugFPS = false;
+        public static bool debugFPS = true;
 
         public static ContextSettings context = new ContextSettings();
         public static RenderWindow window;

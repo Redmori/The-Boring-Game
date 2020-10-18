@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFMLTest2", "SFMLTest2\SFMLTest2.csproj", "{C24CACA3-EAA5-4631-B040-D0556F7C3573}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C24CACA3-EAA5-4631-B040-D0556F7C3573}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C24CACA3-EAA5-4631-B040-D0556F7C3573}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C24CACA3-EAA5-4631-B040-D0556F7C3573}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C24CACA3-EAA5-4631-B040-D0556F7C3573}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69A710BE-A0E9-4C53-ADDF-1C8645B47573}
+	EndGlobalSection
+EndGlobal

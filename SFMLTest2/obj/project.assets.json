@@ -8,19 +8,19 @@
     ".NETCoreApp,Version=v3.1": []
   },
   "packageFolders": {
-    "C:\\Users\\redna\\.nuget\\packages\\": {}
+    "C:\\Users\\Sander\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Repositories\\SFMLTest2\\SFMLTest2\\SFMLTest2.csproj",
+      "projectUniqueName": "E:\\Repositories\\Boringgame\\The-Boring-Game\\SFMLTest2\\SFMLTest2.csproj",
       "projectName": "SFMLTest2",
-      "projectPath": "D:\\Repositories\\SFMLTest2\\SFMLTest2\\SFMLTest2.csproj",
-      "packagesPath": "C:\\Users\\redna\\.nuget\\packages\\",
-      "outputPath": "D:\\Repositories\\SFMLTest2\\SFMLTest2\\obj\\",
+      "projectPath": "E:\\Repositories\\Boringgame\\The-Boring-Game\\SFMLTest2\\SFMLTest2.csproj",
+      "packagesPath": "C:\\Users\\Sander\\.nuget\\packages\\",
+      "outputPath": "E:\\Repositories\\Boringgame\\The-Boring-Game\\SFMLTest2\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\redna\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Sander\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

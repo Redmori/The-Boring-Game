@@ -31,20 +31,100 @@ namespace SFMLTest2
 
             //make function that moves certain direction for dt*speed, if no collision it just returns dt*speed, if collision it returns the clamp to that collision. This should work in all directions
 
+            
+
+
+
 
 
             Tile currentTile = map.TileAtCoords(this.GetX(), this.GetY());
-            
-            float stepSize = dt * speed;
-            if (Keyboard.IsKeyPressed(Keyboard.Key.S) && map.TileAtCoords(GetX() + halfSizeX, GetY() + stepSize + halfSizeY).passable && map.TileAtCoords(GetX() - halfSizeX, GetY() + stepSize + halfSizeY).passable)
-                this.MoveY(stepSize);  //Collision check Bottom side right and left corner
-            if (Keyboard.IsKeyPressed(Keyboard.Key.W) && map.TileAtCoords(GetX() + halfSizeX, GetY() - stepSize - halfSizeY).passable && map.TileAtCoords(GetX() - halfSizeX, GetY() - stepSize - halfSizeY).passable)
-                this.MoveY(-stepSize); //Collision check Top side right and left corner
-            if (Keyboard.IsKeyPressed(Keyboard.Key.A) && map.TileAtCoords(GetX() - stepSize - halfSizeX, GetY() + halfSizeY).passable && map.TileAtCoords(GetX() - stepSize - halfSizeX, GetY() - halfSizeY).passable)
-                this.MoveX(-stepSize); //Collision check Left side Top and Bottom corner
-            if (Keyboard.IsKeyPressed(Keyboard.Key.D) && map.TileAtCoords(GetX() + stepSize + halfSizeX, GetY() + halfSizeY).passable && map.TileAtCoords(GetX() + stepSize + halfSizeX, GetY() - halfSizeY).passable)
-                this.MoveX(stepSize); //Collision check Right side Top and Bottom corner
 
+
+            float fallLength = dt * speed * 2f;
+            float stepSize = dt * speed;
+            float climbSpeed = 0.8f;
+
+
+
+
+
+
+            if (CollisionCheckDown(fallLength, map) && !(Keyboard.IsKeyPressed(Keyboard.Key.A) && !CollisionCheckLeft(-stepSize, map)) && !(Keyboard.IsKeyPressed(Keyboard.Key.D) && !CollisionCheckRight(stepSize, map)))
+            {
+                this.MoveY(fallLength);
+            }
+            else
+            {
+                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                {
+                    if (CollisionCheckLeft(-stepSize, map)) //Collision check Left side Top and Bottom corner
+                    {
+                        this.MoveX(-stepSize);
+                    }
+                    else
+                    {
+                        if (Keyboard.IsKeyPressed(Keyboard.Key.W) && CollisionCheckUp(-stepSize * climbSpeed, map))
+                        {
+                            this.MoveY(-stepSize * climbSpeed);
+                            if (CollisionCheckRight(-stepSize, map))
+                                this.MoveX(-stepSize);
+                        }
+                        if (Keyboard.IsKeyPressed(Keyboard.Key.S) && CollisionCheckDown(stepSize * climbSpeed, map))
+                            this.MoveY(stepSize * climbSpeed);
+                    }
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                {
+                    if (CollisionCheckRight(stepSize, map)) //Collision check Right side Top and Bottom corner
+                    {
+                        this.MoveX(stepSize);
+                    }
+                    else
+                    {
+                        if (Keyboard.IsKeyPressed(Keyboard.Key.W) && CollisionCheckUp(-stepSize * climbSpeed, map))
+                        {
+                            this.MoveY(-stepSize * climbSpeed);
+                            if(CollisionCheckRight(stepSize, map))
+                                this.MoveX(stepSize);
+                        }
+                        if (Keyboard.IsKeyPressed(Keyboard.Key.S) && CollisionCheckDown(stepSize * climbSpeed, map))
+                            this.MoveY(stepSize * climbSpeed);
+                    }
+                }
+            }
+
+
+
+            //float stepSize = dt * speed;
+            //if (Keyboard.IsKeyPressed(Keyboard.Key.S) && CollisionCheckDown(stepSize, map))
+            //    this.MoveY(stepSize);  //Collision check Bottom side right and left corner
+            //if (Keyboard.IsKeyPressed(Keyboard.Key.W) && CollisionCheckUp(-stepSize, map))
+            //    this.MoveY(-stepSize); //Collision check Top side right and left corner
+            //if (Keyboard.IsKeyPressed(Keyboard.Key.A) && CollisionCheckLeft(-stepSize,map))
+            //    this.MoveX(-stepSize); //Collision check Left side Top and Bottom corner
+            //if (Keyboard.IsKeyPressed(Keyboard.Key.D) && CollisionCheckRight(stepSize, map))
+            //    this.MoveX(stepSize); //Collision check Right side Top and Bottom corner
+
+        }
+
+        public bool CollisionCheckDown(float dy, Map map)
+        {
+            return map.TileAtCoords(GetX() + halfSizeX, GetY() + dy + halfSizeY).passable && map.TileAtCoords(GetX() - halfSizeX, GetY() + dy + halfSizeY).passable;
+        }
+
+        public bool CollisionCheckUp(float dy, Map map)
+        {
+            return map.TileAtCoords(GetX() + halfSizeX, GetY() + dy - halfSizeY).passable && map.TileAtCoords(GetX() - halfSizeX, GetY() + dy - halfSizeY).passable;
+        }
+
+        public bool CollisionCheckLeft(float dx, Map map)
+        {
+            return map.TileAtCoords(GetX() + dx - halfSizeX, GetY() + halfSizeY).passable && map.TileAtCoords(GetX() + dx - halfSizeX, GetY() - halfSizeY).passable;
+        }
+
+        public bool CollisionCheckRight(float dx, Map map)
+        {
+            return map.TileAtCoords(GetX() + dx + halfSizeX, GetY() + halfSizeY).passable && map.TileAtCoords(GetX() + dx + halfSizeX, GetY() - halfSizeY).passable;
         }
 
         public void InitPlayer(Texture player_tex)
