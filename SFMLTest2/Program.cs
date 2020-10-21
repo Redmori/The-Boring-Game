@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.WebSockets;
 using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
@@ -10,7 +11,7 @@ namespace SFMLTest2
 {
     class Program
     {
-        public static bool debugFPS = true;
+        public static bool debugFPS = false;
 
         public static ContextSettings context = new ContextSettings();
         public static RenderWindow window;
@@ -33,6 +34,7 @@ namespace SFMLTest2
         public static List<Text> texts;
 
         public static Map map;
+        
 
 
         static void Main(string[] args)
@@ -147,6 +149,43 @@ namespace SFMLTest2
 
             }
 
+            //Place Cart TEMP
+            if (Keyboard.IsKeyPressed(Keyboard.Key.Space) && map.drivingCart == null)
+            {
+                Cart newCart = new Cart(window.MapPixelToCoords(Mouse.GetPosition(window)).X, map.tiles[0][map.height-2].sprite.Position.Y, map.tileSize);
+                newCart.SetSprite(SpriteManager.GetStructureSprite(StructureType.Cart, newCart.GetX(), newCart.GetY()));
+
+                gameObjects.Add(newCart);
+                map.carts.Add(newCart);
+                map.platforms.Add(newCart);
+                map.drivingCart = newCart;
+            }
+
+
+            //Move Carts
+            if(map.drivingCart != null)
+                map.drivingCart.MoveCart(dt, map);
+
+
+            ////Place ladder TEMP
+            //if (Keyboard.IsKeyPressed(Keyboard.Key.Num1))
+            //{
+            //    Ladder newLadder = new Ladder(window.MapPixelToCoords(Mouse.GetPosition(window)).X, window.MapPixelToCoords(Mouse.GetPosition(window)).Y);
+
+            //    gameObjects.Add(newLadder);
+            //    map.ladders.Add(newLadder);
+            //}
+
+            //Check the inventory for building
+            GameObject newGameObject = player.inventory.CheckBuilding(window.MapPixelToCoords(Mouse.GetPosition(window)), map);
+            if(newGameObject != null)
+            {
+                gameObjects.Add(newGameObject);
+                if(newGameObject is Ladder)
+                    map.ladders.Add((Ladder)newGameObject);
+            }
+
+
 
         }
 
@@ -186,9 +225,15 @@ namespace SFMLTest2
                 text.Draw(window, RenderStates.Default);
             }
 
+            //Draw building indicator
+            player.inventory.DrawBuildingSprite(window);
+
+
             //Draw the cursor
             mouse_sprite.Position = window.MapPixelToCoords(Mouse.GetPosition(window));
             mouse_sprite.Draw(window, RenderStates.Default);
+
+
         }
 
 
@@ -236,7 +281,8 @@ namespace SFMLTest2
         {
             if (e.Code == Keyboard.Key.Escape)
             {
-                window.Close();
+                if(!player.inventory.building)
+                        window.Close();
             }
             if (e.Code == Keyboard.Key.Space)
             {

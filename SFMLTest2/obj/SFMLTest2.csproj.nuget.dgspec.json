@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Repositories\\Boringgame\\The-Boring-Game\\SFMLTest2\\SFMLTest2.csproj": {}
+    "D:\\Repositories\\SFMLTest2\\SFMLTest2\\SFMLTest2.csproj": {}
   },
   "projects": {
-    "E:\\Repositories\\Boringgame\\The-Boring-Game\\SFMLTest2\\SFMLTest2.csproj": {
+    "D:\\Repositories\\SFMLTest2\\SFMLTest2\\SFMLTest2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Repositories\\Boringgame\\The-Boring-Game\\SFMLTest2\\SFMLTest2.csproj",
+        "projectUniqueName": "D:\\Repositories\\SFMLTest2\\SFMLTest2\\SFMLTest2.csproj",
         "projectName": "SFMLTest2",
-        "projectPath": "E:\\Repositories\\Boringgame\\The-Boring-Game\\SFMLTest2\\SFMLTest2.csproj",
-        "packagesPath": "C:\\Users\\Sander\\.nuget\\packages\\",
-        "outputPath": "E:\\Repositories\\Boringgame\\The-Boring-Game\\SFMLTest2\\obj\\",
+        "projectPath": "D:\\Repositories\\SFMLTest2\\SFMLTest2\\SFMLTest2.csproj",
+        "packagesPath": "C:\\Users\\redna\\.nuget\\packages\\",
+        "outputPath": "D:\\Repositories\\SFMLTest2\\SFMLTest2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Sander\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\redna\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

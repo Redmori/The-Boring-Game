@@ -16,6 +16,43 @@ namespace SFMLTest2
         public static Texture mouse_tex = new Texture("../../Content/Mouse.png");
 
 
+        public static Texture cart_tex = new Texture("../../Content/Cart.png");
+        public static Texture ladder_tex = new Texture("../../Content/Ladder.png");
+        public static Texture platform_tex = new Texture("../../Content/Platform.png");
+
+        public static Sprite GetStructureSprite(StructureType type, float x, float y )
+        {
+            Sprite newSprite = GetStructureSprite(type);
+            newSprite.Position = new Vector2f(x, y);
+            return newSprite;
+        }
+
+        public static Sprite GetStructureSprite(StructureType type)
+        {
+            Sprite structSprite = null;
+            switch (type)
+            {
+                case StructureType.Cart:
+                {
+                        structSprite = new Sprite(cart_tex);
+                         break;
+                }
+                case StructureType.Platform:
+                    {
+                        structSprite = new Sprite(platform_tex);
+                        break;
+                }
+                case StructureType.Ladder:
+                    {
+                        structSprite = new Sprite(ladder_tex);
+                        structSprite.Origin = new Vector2f(structSprite.Texture.Size.X / 2f, 3* structSprite.Texture.Size.Y / 4f);
+                        break;
+                }
+            }
+            if(type != StructureType.Ladder)
+                structSprite.Origin = new Vector2f(structSprite.Texture.Size.X / 2f, structSprite.Texture.Size.Y / 2f);
+            return structSprite;
+        }
 
         public static Sprite ChangeSprite(Type type, Sprite oldSprite)
         {

@@ -17,9 +17,17 @@ namespace SFMLTest2
         public float tileSize;
         public  List<Tile[]> tiles;
 
+        public List<Platform> platforms;
+        public List<Cart> carts;
+        public Cart drivingCart;
+        public List<Ladder> ladders;
+
         public Map()
         {
             this.tiles = new List<Tile[]>();
+            this.platforms = new List<Platform>();
+            this.carts = new List<Cart>();
+            this.ladders = new List<Ladder>();
             width = 100;
             height = 30;
             progress = width / 2;
