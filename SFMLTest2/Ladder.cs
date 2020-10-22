@@ -8,8 +8,6 @@ namespace SFMLTest2
     {
         public Ladder(float x, float y) : base(x,y)
         {
-            SetSprite(SpriteManager.GetStructureSprite(StructureType.Ladder, x, y));
-            UpdateSprite();
         }
 
     }

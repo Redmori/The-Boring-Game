@@ -34,8 +34,10 @@ namespace SFMLTest2
 
         public void MovePlatform(float dx)
         {
+            SetX(GetX() + dx);
+
             //TODO mvoe all the structures ontop of this
-            for(int i = 0; i < slots; i++)
+            for (int i = 0; i < slots; i++)
             {
                 if(structures[i] != null)
                     structures[i].MoveX(dx);

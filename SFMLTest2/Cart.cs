@@ -15,16 +15,27 @@ namespace SFMLTest2
             platforms = new List<Platform>();
         }
 
-        public void MoveCart(float dt, Map map)
+        public bool MoveCart(float dt, Map map)
         {
-            if (this.CollisionCheckRight(cartSpeed * dt, map))
+            if (this.CollisionCheckRight(cartSpeed * dt, map) && dt != 0)
             {
-                SetX(GetX() + cartSpeed * dt);
                 MovePlatform(cartSpeed * dt);
+
+                foreach(Platform platform in platforms)
+                {
+                    platform.MovePlatform(cartSpeed * dt);
+                }
+                return true;
             }
             else
             {
                 MovePlatform(0);
+
+                foreach (Platform platform in platforms)
+                {
+                    platform.MovePlatform(0);
+                }
+                return false;
             }
 
 

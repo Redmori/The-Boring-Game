@@ -19,6 +19,7 @@ namespace SFMLTest2
         public static Texture cart_tex = new Texture("../../Content/Cart.png");
         public static Texture ladder_tex = new Texture("../../Content/Ladder.png");
         public static Texture platform_tex = new Texture("../../Content/Platform.png");
+        public static Texture furnace_tex = new Texture("../../Content/Furnace.png");
 
         public static Sprite GetStructureSprite(StructureType type, float x, float y )
         {
@@ -48,6 +49,11 @@ namespace SFMLTest2
                         structSprite.Origin = new Vector2f(structSprite.Texture.Size.X / 2f, 3* structSprite.Texture.Size.Y / 4f);
                         break;
                 }
+                case StructureType.Furnace:
+                    {
+                        structSprite = new Sprite(furnace_tex);
+                        break;
+                    }
             }
             if(type != StructureType.Ladder)
                 structSprite.Origin = new Vector2f(structSprite.Texture.Size.X / 2f, structSprite.Texture.Size.Y / 2f);

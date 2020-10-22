@@ -105,7 +105,7 @@ namespace SFMLTest2
                         passable = false;
                         minable = false;
                     }
-                    else if (i <= progress && j > 5 && j < 15 && i > 25)
+                    else if (i <= progress && j > 20  && i > 25)
                     {
                         type = Type.Empty;
                     }

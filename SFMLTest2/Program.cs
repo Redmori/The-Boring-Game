@@ -63,12 +63,14 @@ namespace SFMLTest2
 
             Console.WriteLine("Window opened!");
 
+            //Load sounds
+            SoundManager.LoadSounds();
 
             //initialize the map
             map = new Map();
                         
             //initialize player
-            player = new Player(map.progress* map.tileSize - 5 * map.tileSize, 2*windowHeight / 3, 200f, player_tex) ;
+            player = new Player(map.progress* map.tileSize - 5 * map.tileSize, map.tileSize * (map.height - 4), 200f, player_tex) ;
 
 
             //initialize texts
@@ -149,22 +151,29 @@ namespace SFMLTest2
 
             }
 
-            //Place Cart TEMP
-            if (Keyboard.IsKeyPressed(Keyboard.Key.Space) && map.drivingCart == null)
-            {
-                Cart newCart = new Cart(window.MapPixelToCoords(Mouse.GetPosition(window)).X, map.tiles[0][map.height-2].sprite.Position.Y, map.tileSize);
-                newCart.SetSprite(SpriteManager.GetStructureSprite(StructureType.Cart, newCart.GetX(), newCart.GetY()));
+            ////Place Cart TEMP
+            //if (Keyboard.IsKeyPressed(Keyboard.Key.Space) && map.drivingCart == null)
+            //{
+            //    Cart newCart = new Cart(window.MapPixelToCoords(Mouse.GetPosition(window)).X, map.tiles[0][map.height-2].sprite.Position.Y, map.tileSize);
+            //    newCart.SetSprite(SpriteManager.GetStructureSprite(StructureType.Cart, newCart.GetX(), newCart.GetY()));
 
-                gameObjects.Add(newCart);
-                map.carts.Add(newCart);
-                map.platforms.Add(newCart);
-                map.drivingCart = newCart;
-            }
+            //    gameObjects.Add(newCart);
+            //    map.carts.Add(newCart);
+            //    map.platforms.Add(newCart);
+            //    map.drivingCart = newCart;
+            //}
 
 
             //Move Carts
-            if(map.drivingCart != null)
-                map.drivingCart.MoveCart(dt, map);
+            if (map.drivingCart != null)
+            {
+                bool moved = map.drivingCart.MoveCart(dt, map);
+                foreach(Cart cart in map.carts)
+                {
+                    if(cart != map.drivingCart) //move all other carts if the driving cart moved
+                        cart.MoveCart(moved ? dt : 0, map);
+                }
+            }
 
 
             ////Place ladder TEMP

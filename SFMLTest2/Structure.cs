@@ -10,6 +10,7 @@ namespace SFMLTest2
         Cart,
         Platform,
         Ladder,
+        Furnace,
 
         Count
     }
