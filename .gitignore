@@ -6,3 +6,5 @@ Debug/*
 Release/*
 **/Debug/*
 **/Release/*
+.vs/*
+**/.vs/*
