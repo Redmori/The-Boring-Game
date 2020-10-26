@@ -50,101 +50,100 @@ namespace BoringGame
             float climbSpeed = 0.8f;
 
 
-            if(!Keyboard.IsKeyPressed(Keyboard.Key.W) && !Keyboard.IsKeyPressed(Keyboard.Key.S))
-            {
-                onLadder = false;
-            }
+            //if(!Keyboard.IsKeyPressed(Keyboard.Key.W) && !Keyboard.IsKeyPressed(Keyboard.Key.S))
+            //{
+            //    onLadder = false;
+            //}
 
 
+            //if (!onLadder && CollisionCheckDown(fallLength, map) && !(Keyboard.IsKeyPressed(Keyboard.Key.A) && !CollisionCheckLeft(-stepSize, map)) && !(Keyboard.IsKeyPressed(Keyboard.Key.D) && !CollisionCheckRight(stepSize, map)))
+            //{
+            //    this.MoveY(fallLength);
+            //}
+            //else
+            //{
+            //    if (onLadder && (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.S)))
+            //    {
+            //        Ladder ladder = FindLadder(map);
+            //        if(ladder != null && CollisionCheckUp(-stepSize * climbSpeed, map) && (Keyboard.IsKeyPressed(Keyboard.Key.W)))
+            //        {
+            //            this.MoveY(-stepSize * climbSpeed);
+            //        }
+            //        if (ladder != null && CollisionCheckUp(stepSize * climbSpeed, map) && (Keyboard.IsKeyPressed(Keyboard.Key.S)))
+            //        {
+            //            this.MoveY(stepSize * climbSpeed);
+            //        }
 
-            if (!onLadder && CollisionCheckDown(fallLength, map) && !(Keyboard.IsKeyPressed(Keyboard.Key.A) && !CollisionCheckLeft(-stepSize, map)) && !(Keyboard.IsKeyPressed(Keyboard.Key.D) && !CollisionCheckRight(stepSize, map)))
-            {
-                this.MoveY(fallLength);
-            }
-            else
-            {
-                if (onLadder && (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.S)))
-                {
-                    Ladder ladder = FindLadder(map);
-                    if(ladder != null && CollisionCheckUp(-stepSize * climbSpeed, map) && (Keyboard.IsKeyPressed(Keyboard.Key.W)))
-                    {
-                        this.MoveY(-stepSize * climbSpeed);
-                    }
-                    if (ladder != null && CollisionCheckUp(stepSize * climbSpeed, map) && (Keyboard.IsKeyPressed(Keyboard.Key.S)))
-                    {
-                        this.MoveY(stepSize * climbSpeed);
-                    }
-
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
-                {
-                    if (CollisionCheckLeft(-stepSize, map)) //Collision check Left side Top and Bottom corner
-                    {
-                        Ladder ladder = FindLadder(map);
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.W) && ladder != null && CollisionCheckUp(-stepSize * climbSpeed, map))
-                        {
-                            if (onLadder)
-                            {
-                                this.MoveY(-stepSize * climbSpeed);
-                            }
-                            else
-                            {
-                                this.SetX(ladder.GetX());
-                                onLadder = true;
-                            }
-                        }
-                        else
-                        {
-                            this.MoveX(-stepSize);
-                        }
-                    }
-                    else
-                    {
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.W) && CollisionCheckUp(-stepSize * climbSpeed, map))
-                        {
-                            this.MoveY(-stepSize * climbSpeed);
-                            if (CollisionCheckLeft(-stepSize, map))
-                                this.MoveX(-stepSize);
-                        }
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.S) && CollisionCheckDown(stepSize * climbSpeed, map))
-                            this.MoveY(stepSize * climbSpeed);
-                    }
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
-                {
-                    if (CollisionCheckRight(stepSize, map)) //Collision check Right side Top and Bottom corner
-                    {
-                        Ladder ladder = FindLadder(map);
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.W) && ladder != null && CollisionCheckUp(-stepSize * climbSpeed, map))
-                        {
-                            if (onLadder)
-                            {
-                                this.MoveY(-stepSize * climbSpeed);
-                            }
-                            else
-                            {
-                                this.SetX(ladder.GetX());
-                                onLadder = true;
-                            }
-                        }
-                        else
-                        {
-                            this.MoveX(stepSize);
-                        }
-                    }
-                    else
-                    {
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.W) && CollisionCheckUp(-stepSize * climbSpeed, map))
-                        {
-                            this.MoveY(-stepSize * climbSpeed);
-                            if(CollisionCheckRight(stepSize, map))
-                                this.MoveX(stepSize);
-                        }
-                        if (Keyboard.IsKeyPressed(Keyboard.Key.S) && CollisionCheckDown(stepSize * climbSpeed, map))
-                            this.MoveY(stepSize * climbSpeed);
-                    }
-                }
-            }
+            //    }
+            //    if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+            //    {
+            //        if (CollisionCheckLeft(-stepSize, map)) //Collision check Left side Top and Bottom corner
+            //        {
+            //            Ladder ladder = FindLadder(map);
+            //            if (Keyboard.IsKeyPressed(Keyboard.Key.W) && ladder != null && CollisionCheckUp(-stepSize * climbSpeed, map))
+            //            {
+            //                if (onLadder)
+            //                {
+            //                    this.MoveY(-stepSize * climbSpeed);
+            //                }
+            //                else
+            //                {
+            //                    this.SetX(ladder.GetX());
+            //                    onLadder = true;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                this.MoveX(-stepSize);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (Keyboard.IsKeyPressed(Keyboard.Key.W) && CollisionCheckUp(-stepSize * climbSpeed, map))
+            //            {
+            //                this.MoveY(-stepSize * climbSpeed);
+            //                if (CollisionCheckLeft(-stepSize, map))
+            //                    this.MoveX(-stepSize);
+            //            }
+            //            if (Keyboard.IsKeyPressed(Keyboard.Key.S) && CollisionCheckDown(stepSize * climbSpeed, map))
+            //                this.MoveY(stepSize * climbSpeed);
+            //        }
+            //    }
+            //    if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+            //    {
+            //        if (CollisionCheckRight(stepSize, map)) //Collision check Right side Top and Bottom corner
+            //        {
+            //            Ladder ladder = FindLadder(map);
+            //            if (Keyboard.IsKeyPressed(Keyboard.Key.W) && ladder != null && CollisionCheckUp(-stepSize * climbSpeed, map))
+            //            {
+            //                if (onLadder)
+            //                {
+            //                    this.MoveY(-stepSize * climbSpeed);
+            //                }
+            //                else
+            //                {
+            //                    this.SetX(ladder.GetX());
+            //                    onLadder = true;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                this.MoveX(stepSize);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (Keyboard.IsKeyPressed(Keyboard.Key.W) && CollisionCheckUp(-stepSize * climbSpeed, map))
+            //            {
+            //                this.MoveY(-stepSize * climbSpeed);
+            //                if(CollisionCheckRight(stepSize, map))
+            //                    this.MoveX(stepSize);
+            //            }
+            //            if (Keyboard.IsKeyPressed(Keyboard.Key.S) && CollisionCheckDown(stepSize * climbSpeed, map))
+            //                this.MoveY(stepSize * climbSpeed);
+            //        }
+            //    }
+            //}
 
 
 
@@ -158,7 +157,147 @@ namespace BoringGame
             //if (Keyboard.IsKeyPressed(Keyboard.Key.D) && CollisionCheckRight(stepSize, map))
             //    this.MoveX(stepSize); //Collision check Right side Top and Bottom corner
 
+
+
+            if (Keyboard.IsKeyPressed(Keyboard.Key.W)) //TODO check if on ladder or climbing something i guess
+                this.MoveY(CollisionCheckUpN(-climbSpeed * stepSize, map));
+            else
+                this.MoveY(CollisionCheckDownN(fallLength, map));
+
+            if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                this.MoveX(CollisionCheckRightN(stepSize, map));
+
+            if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                this.MoveX(CollisionCheckLeftN(-stepSize, map));
+
         }
+
+        //TEMP doesnt work
+        public Vector2f CollsionCheck(Vector2f delta, Map map)
+        {
+            //Check for tile at the position where we move to
+            Tile targetTile = map.TileAtCoords(GetX() + delta.X, GetY() + delta.Y); //TODO: account for halfsizes, maybe try aabb collision check?
+
+            if (targetTile != null) //if the tile exists
+            {
+                if (targetTile.passable)
+                { //if the tile is passable, just move there
+                    return delta;
+                }
+                else //if the tile is not passable, find the edge so we can move there
+                {
+                    if(delta.X > 0) //going right
+                    {
+
+                    }
+                    else if(delta.X < 0) //going left
+                    {
+
+                    }
+
+                    if(delta.Y > 0) //falling or going down
+                    {
+
+                    }
+                    else if (delta.Y < 0) //going up
+                    {
+
+                    }
+
+                    return new Vector2f(delta.X / 2, delta.Y / 2);
+                }
+            }
+            else //tile does not exist, dont move
+            {
+                return new Vector2f(0f, 0f);
+            }
+        }
+
+        public float CollisionCheckDownN(float dy, Map map)
+        {
+            Tile SE = map.TileAtCoords(GetX() + halfSizeX, GetY() + dy + halfSizeY);
+            Tile SW = map.TileAtCoords(GetX() - halfSizeX, GetY() + dy + halfSizeY);
+
+            if (SE == null || SW == null)
+                return 0f;
+
+            
+            if (!SE.passable)
+            {
+                dy = Math.Min(dy, SE.sprite.Position.Y  - map.tileSize /2 - GetY() - halfSizeY);
+            }
+            if (!SW.passable)
+            {
+                dy = Math.Min(dy, SW.sprite.Position.Y - map.tileSize / 2 - GetY() - halfSizeY);
+            }
+
+            return dy;
+        }
+
+        public float CollisionCheckUpN(float dy, Map map)
+        {
+            Tile NE = map.TileAtCoords(GetX() + halfSizeX, GetY() + dy - halfSizeY);
+            Tile NW = map.TileAtCoords(GetX() - halfSizeX, GetY() + dy - halfSizeY);
+
+            if (NE == null || NW == null)
+                return 0f;
+
+
+            if (!NE.passable)
+            {
+                dy = Math.Max(dy, NE.sprite.Position.Y + map.tileSize / 2 - GetY() + halfSizeY);
+            }
+            if (!NW.passable)
+            {
+                dy = Math.Max(dy, NW.sprite.Position.Y + map.tileSize / 2 - GetY() + halfSizeY);
+            }
+
+            return dy;
+        }
+
+        public float CollisionCheckRightN(float dx, Map map)
+        {
+            Tile NE = map.TileAtCoords(GetX() + dx + halfSizeX, GetY() + halfSizeY);
+            Tile SE = map.TileAtCoords(GetX() + dx + halfSizeX, GetY() - halfSizeY);
+
+            if (NE == null || SE == null)
+                return 0f;
+
+
+            if (!NE.passable)
+            {
+                dx = Math.Min(dx, NE.sprite.Position.X - map.tileSize / 2 - GetX() - halfSizeX);
+            }
+            if (!SE.passable)
+            {
+                dx = Math.Min(dx, SE.sprite.Position.X - map.tileSize / 2 - GetX() - halfSizeX);
+            }
+
+            return dx;
+        }
+
+
+        public float CollisionCheckLeftN(float dx, Map map)
+        {
+            Tile NW = map.TileAtCoords(GetX() + dx - halfSizeX, GetY() + halfSizeY);
+            Tile SW = map.TileAtCoords(GetX() + dx - halfSizeX, GetY() - halfSizeY);
+
+            if (NW == null || SW == null)
+                return 0f;
+
+
+            if (!NW.passable)
+            {
+                dx = Math.Max(dx, NW.sprite.Position.X + map.tileSize / 2 - GetX() + halfSizeX);
+            }
+            if (!SW.passable)
+            {
+                dx = Math.Max(dx, SW.sprite.Position.X + map.tileSize / 2 - GetX() + halfSizeX);
+            }
+
+            return dx;
+        }
+
 
         public bool CollisionCheckDown(float dy, Map map)
         {

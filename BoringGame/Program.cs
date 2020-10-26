@@ -98,7 +98,7 @@ namespace BoringGame
             while (window.IsOpen)
             {
                 DateTime newTime = DateTime.Now;
-                float deltaTime = Math.Min(0.5f,(newTime.Ticks - currentTime.Ticks) / 10000000f);
+                float deltaTime = Math.Min(0.2f,(newTime.Ticks - currentTime.Ticks) / 10000000f);
                 currentTime = newTime;
                 if(debugFPS)
                     Console.WriteLine(1f / deltaTime);
