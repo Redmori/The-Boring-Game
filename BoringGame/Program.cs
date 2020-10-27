@@ -6,7 +6,7 @@ using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-//test
+
 namespace BoringGame
 {
     class Program
