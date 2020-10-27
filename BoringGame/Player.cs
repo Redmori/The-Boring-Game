@@ -159,16 +159,17 @@ namespace BoringGame
 
 
 
-            if (Keyboard.IsKeyPressed(Keyboard.Key.W)) //TODO check if on ladder or climbing something i guess
-                this.MoveY(CollisionCheckUpN(-climbSpeed * stepSize, map));
+            if (Keyboard.IsKeyPressed(Keyboard.Key.W) && OnLadder(map)) //TODO check if on ladder or climbing something i guess
+
+                this.MoveY(CollisionCheckUp(-climbSpeed * stepSize, map));
             else
-                this.MoveY(CollisionCheckDownN(fallLength, map));
+                this.MoveY(CollisionCheckDown(fallLength, map));
 
             if (Keyboard.IsKeyPressed(Keyboard.Key.D))
-                this.MoveX(CollisionCheckRightN(stepSize, map));
+                this.MoveX(CollisionCheckRight(stepSize, map));
 
             if (Keyboard.IsKeyPressed(Keyboard.Key.A))
-                this.MoveX(CollisionCheckLeftN(-stepSize, map));
+                this.MoveX(CollisionCheckLeft(-stepSize, map));
 
         }
 
@@ -213,7 +214,7 @@ namespace BoringGame
             }
         }
 
-        public float CollisionCheckDownN(float dy, Map map)
+        public float CollisionCheckDown(float dy, Map map)
         {
             Tile SE = map.TileAtCoords(GetX() + halfSizeX, GetY() + dy + halfSizeY);
             Tile SW = map.TileAtCoords(GetX() - halfSizeX, GetY() + dy + halfSizeY);
@@ -231,10 +232,24 @@ namespace BoringGame
                 dy = Math.Min(dy, SW.sprite.Position.Y - map.tileSize / 2 - GetY() - halfSizeY);
             }
 
-            return dy;
+            if (!Keyboard.IsKeyPressed(Keyboard.Key.S))
+            {
+                foreach (Platform platform in map.platforms)
+                {
+                    if (GetY() + halfSizeY < platform.GetPlatformY() && GetY() + halfSizeY + dy > platform.GetPlatformY() && GetX() + halfSizeX > platform.GetX() - platform.halfWidth && GetX() - halfSizeX < platform.GetX() + platform.halfWidth)
+                    {
+                        dy = Math.Min(dy, platform.GetPlatformY() - GetY() - halfSizeY);
+                        //this.SetX(GetX() + platform.previousDX); //TODO collision with player and wall
+                        this.MoveX(CollisionCheckRight(platform.previousDX, map));
+                    }
+                }
+            }
+
+
+            return dy - 0.001f;
         }
 
-        public float CollisionCheckUpN(float dy, Map map)
+        public float CollisionCheckUp(float dy, Map map)
         {
             Tile NE = map.TileAtCoords(GetX() + halfSizeX, GetY() + dy - halfSizeY);
             Tile NW = map.TileAtCoords(GetX() - halfSizeX, GetY() + dy - halfSizeY);
@@ -252,17 +267,16 @@ namespace BoringGame
                 dy = Math.Max(dy, NW.sprite.Position.Y + map.tileSize / 2 - GetY() + halfSizeY);
             }
 
-            return dy;
+            return dy + 0.001f;
         }
 
-        public float CollisionCheckRightN(float dx, Map map)
+        public float CollisionCheckRight(float dx, Map map)
         {
             Tile NE = map.TileAtCoords(GetX() + dx + halfSizeX, GetY() + halfSizeY);
             Tile SE = map.TileAtCoords(GetX() + dx + halfSizeX, GetY() - halfSizeY);
 
             if (NE == null || SE == null)
                 return 0f;
-
 
             if (!NE.passable)
             {
@@ -273,11 +287,11 @@ namespace BoringGame
                 dx = Math.Min(dx, SE.sprite.Position.X - map.tileSize / 2 - GetX() - halfSizeX);
             }
 
-            return dx;
+            return dx - 0.001f;
         }
 
 
-        public float CollisionCheckLeftN(float dx, Map map)
+        public float CollisionCheckLeft(float dx, Map map)
         {
             Tile NW = map.TileAtCoords(GetX() + dx - halfSizeX, GetY() + halfSizeY);
             Tile SW = map.TileAtCoords(GetX() + dx - halfSizeX, GetY() - halfSizeY);
@@ -295,83 +309,98 @@ namespace BoringGame
                 dx = Math.Max(dx, SW.sprite.Position.X + map.tileSize / 2 - GetX() + halfSizeX);
             }
 
-            return dx;
+            return dx + 0.001f;
         }
 
 
-        public bool CollisionCheckDown(float dy, Map map)
-        {
-            if (!map.TileAtCoords(GetX() + halfSizeX, GetY() + dy + halfSizeY).passable || !map.TileAtCoords(GetX() - halfSizeX, GetY() + dy + halfSizeY).passable)
-                return false;
+        //public bool CollisionCheckDown(float dy, Map map)
+        //{
+        //    if (!map.TileAtCoords(GetX() + halfSizeX, GetY() + dy + halfSizeY).passable || !map.TileAtCoords(GetX() - halfSizeX, GetY() + dy + halfSizeY).passable)
+        //        return false;
 
-            foreach (Platform platform in map.platforms)
-            {
-                if (GetY() + halfSizeY < platform.GetPlatformY() && GetY() + halfSizeY + dy > platform.GetPlatformY() && GetX() + halfSizeX > platform.GetX() - platform.halfWidth && GetX() - halfSizeX < platform.GetX() + platform.halfWidth)
+        //    foreach (Platform platform in map.platforms)
+        //    {
+        //        if (GetY() + halfSizeY < platform.GetPlatformY() && GetY() + halfSizeY + dy > platform.GetPlatformY() && GetX() + halfSizeX > platform.GetX() - platform.halfWidth && GetX() - halfSizeX < platform.GetX() + platform.halfWidth)
+        //        {
+        //            this.SetX(GetX() + platform.previousDX); //TODO collision with player and wall
+        //            return false;
+        //        }
+        //    }
+
+        //    return true;
+
+        //    //return map.TileAtCoords(GetX() + halfSizeX, GetY() + dy + halfSizeY).passable && map.TileAtCoords(GetX() - halfSizeX, GetY() + dy + halfSizeY).passable
+        //}
+
+        //public bool CollisionCheckUp(float dy, Map map)
+        //{
+        //    return map.TileAtCoords(GetX() + halfSizeX, GetY() + dy - halfSizeY).passable && map.TileAtCoords(GetX() - halfSizeX, GetY() + dy - halfSizeY).passable;
+        //}
+
+        //public bool CollisionCheckLeft(float dx, Map map)
+        //{
+        //    if (!map.TileAtCoords(GetX() + dx - halfSizeX, GetY() + halfSizeY).passable || !map.TileAtCoords(GetX() + dx - halfSizeX, GetY() - halfSizeY).passable)
+        //        return false;
+
+        //    foreach(Cart cart in map.carts)
+        //    {
+        //        if (GetY() + halfSizeY > cart.GetPlatformY() && GetY() - halfSizeY < cart.GetPlatformY() && GetX() - halfSizeX > cart.GetX() + cart.halfWidth && GetX() - halfSizeX + dx < cart.GetX() + cart.halfWidth)
+        //        {
+        //            this.SetX(GetX() + cart.previousDX); //TODO: allow climbing with cart while its moving
+        //            return false;
+        //        }
+        //    }
+
+        //    return true;
+
+        //    //return map.TileAtCoords(GetX() + dx - halfSizeX, GetY() + halfSizeY).passable && map.TileAtCoords(GetX() + dx - halfSizeX, GetY() - halfSizeY).passable;
+        //}
+
+        //public bool CollisionCheckRight(float dx, Map map)
+        //{
+        //    if (!map.TileAtCoords(GetX() + dx + halfSizeX, GetY() + halfSizeY).passable || !map.TileAtCoords(GetX() + dx + halfSizeX, GetY() - halfSizeY).passable)
+        //        return false;
+
+        //    foreach(Cart cart in map.carts)
+        //    {
+        //        if (GetY() + halfSizeY > cart.GetPlatformY() && GetY() - halfSizeY < cart.GetPlatformY() && GetX() + halfSizeX < cart.GetX() - cart.halfWidth && GetX() + halfSizeX + dx > cart.GetX() - cart.halfWidth)
+        //        {
+        //            this.SetX(GetX() + cart.previousDX); //TODO: allow climbing with cart while its moving
+        //            return false;
+        //        }
+        //    }
+
+
+        //    return true;
+
+        //    //return map.TileAtCoords(GetX() + dx + halfSizeX, GetY() + halfSizeY).passable && map.TileAtCoords(GetX() + dx + halfSizeX, GetY() - halfSizeY).passable;
+        //}
+
+        public bool OnLadder(Map map)
+        {
+            foreach(Ladder ladder in map.ladders){
+                //float xDist = Math.Abs(ladder.GetX() - GetX());
+                //float yDist = Math.Abs(ladder.GetY() - map.tileSize / 2 - GetY());
+                if (Math.Abs(ladder.GetX() - GetX()) < halfSizeX && Math.Abs(ladder.GetY() - map.tileSize / 2 - GetY()) < halfSizeY + map.tileSize)
                 {
-                    this.SetX(GetX() + platform.previousDX); //TODO collision with player and wall
-                    return false;
+                    this.MoveX(CollisionCheckRight(ladder.previousDX, map));
+                    return true;
                 }
             }
 
-            return true;
-
-            //return map.TileAtCoords(GetX() + halfSizeX, GetY() + dy + halfSizeY).passable && map.TileAtCoords(GetX() - halfSizeX, GetY() + dy + halfSizeY).passable
+            return false;
         }
 
-        public bool CollisionCheckUp(float dy, Map map)
-        {
-            return map.TileAtCoords(GetX() + halfSizeX, GetY() + dy - halfSizeY).passable && map.TileAtCoords(GetX() - halfSizeX, GetY() + dy - halfSizeY).passable;
-        }
+        //public Ladder FindLadder(Map map) //TODO old
+        //{
+        //    foreach(Ladder ladder in map.ladders)
+        //    {
+        //        if(Math.Abs(ladder.GetX() - GetX()) < 20f && Math.Abs(ladder.GetY() - GetY()) < 50f)
+        //        return ladder;
+        //    }
 
-        public bool CollisionCheckLeft(float dx, Map map)
-        {
-            if (!map.TileAtCoords(GetX() + dx - halfSizeX, GetY() + halfSizeY).passable || !map.TileAtCoords(GetX() + dx - halfSizeX, GetY() - halfSizeY).passable)
-                return false;
-
-            foreach(Cart cart in map.carts)
-            {
-                if (GetY() + halfSizeY > cart.GetPlatformY() && GetY() - halfSizeY < cart.GetPlatformY() && GetX() - halfSizeX > cart.GetX() + cart.halfWidth && GetX() - halfSizeX + dx < cart.GetX() + cart.halfWidth)
-                {
-                    this.SetX(GetX() + cart.previousDX); //TODO: allow climbing with cart while its moving
-                    return false;
-                }
-            }
-
-            return true;
-
-            //return map.TileAtCoords(GetX() + dx - halfSizeX, GetY() + halfSizeY).passable && map.TileAtCoords(GetX() + dx - halfSizeX, GetY() - halfSizeY).passable;
-        }
-
-        public bool CollisionCheckRight(float dx, Map map)
-        {
-            if (!map.TileAtCoords(GetX() + dx + halfSizeX, GetY() + halfSizeY).passable || !map.TileAtCoords(GetX() + dx + halfSizeX, GetY() - halfSizeY).passable)
-                return false;
-
-            foreach(Cart cart in map.carts)
-            {
-                if (GetY() + halfSizeY > cart.GetPlatformY() && GetY() - halfSizeY < cart.GetPlatformY() && GetX() + halfSizeX < cart.GetX() - cart.halfWidth && GetX() + halfSizeX + dx > cart.GetX() - cart.halfWidth)
-                {
-                    this.SetX(GetX() + cart.previousDX); //TODO: allow climbing with cart while its moving
-                    return false;
-                }
-            }
-
-
-            return true;
-
-            //return map.TileAtCoords(GetX() + dx + halfSizeX, GetY() + halfSizeY).passable && map.TileAtCoords(GetX() + dx + halfSizeX, GetY() - halfSizeY).passable;
-        }
-
-        public Ladder FindLadder(Map map)
-        {
-            foreach(Ladder ladder in map.ladders)
-            {
-                if(Math.Abs(ladder.GetX() - GetX()) < 20f && Math.Abs(ladder.GetY() - GetY()) < 50f)
-                return ladder;
-            }
-
-            return null;
-        }
+        //    return null;
+        //}
 
         public void InitPlayer(Texture player_tex)
         {

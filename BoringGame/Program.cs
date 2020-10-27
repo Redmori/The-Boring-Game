@@ -167,12 +167,23 @@ namespace BoringGame
             //Move Carts
             if (map.drivingCart != null)
             {
-                bool moved = map.drivingCart.MoveCart(dt, map);
+                float dx = map.drivingCart.cartSpeed * dt;
+                foreach(Structure structure in map.structures)
+                {
+                    dx = structure.CollisionCheckRightN(dx, map);
+                }
+
                 foreach(Cart cart in map.carts)
                 {
-                    if(cart != map.drivingCart) //move all other carts if the driving cart moved
-                        cart.MoveCart(moved ? dt : 0, map);
+                    cart.MoveCartN(dx, map);
                 }
+
+                //bool moved = map.drivingCart.MoveCart(dt, map);
+                //foreach(Cart cart in map.carts)
+                //{
+                //    if(cart != map.drivingCart) //move all other carts if the driving cart moved
+                //        cart.MoveCart(moved ? dt : 0, map);
+                //}
             }
 
 
@@ -190,6 +201,8 @@ namespace BoringGame
             if(newGameObject != null)
             {
                 gameObjects.Add(newGameObject);
+                if(newGameObject is Structure)
+                    map.structures.Add((Structure)newGameObject);
                 if(newGameObject is Ladder)
                     map.ladders.Add((Ladder)newGameObject);
             }

@@ -39,8 +39,15 @@ namespace BoringGame
             //TODO mvoe all the structures ontop of this
             for (int i = 0; i < slots; i++)
             {
-                if(structures[i] != null)
+                if (structures[i] != null)
+                {
+                    if (structures[i] is Ladder ladder)
+                    {
+                        ladder.previousDX = dx;
+                    }
+
                     structures[i].MoveX(dx);
+                }
             }
 
             previousDX = dx;

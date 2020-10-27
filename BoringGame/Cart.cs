@@ -41,5 +41,20 @@ namespace BoringGame
 
             //TODO move all platforms ontop of this
         }
+
+        public void MoveCartN(float dx, Map map)
+        {
+
+            MovePlatform(dx);
+
+            foreach (Platform platform in platforms)
+            {
+                platform.MovePlatform(dx);
+            }
+
+
+
+            //TODO move all platforms ontop of this
+        }
     }
 }

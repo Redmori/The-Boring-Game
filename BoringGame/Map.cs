@@ -21,6 +21,7 @@ namespace BoringGame
         public List<Cart> carts;
         public Cart drivingCart;
         public List<Ladder> ladders;
+        public List<Structure> structures;
 
         public Map()
         {
@@ -28,6 +29,7 @@ namespace BoringGame
             this.platforms = new List<Platform>();
             this.carts = new List<Cart>();
             this.ladders = new List<Ladder>();
+            this.structures = new List<Structure>();
             width = 100;
             height = 30;
             progress = width / 2;
