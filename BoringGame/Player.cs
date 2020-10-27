@@ -225,11 +225,11 @@ namespace BoringGame
             
             if (!SE.passable)
             {
-                dy = Math.Min(dy, SE.sprite.Position.Y  - map.tileSize /2 - GetY() - halfSizeY);
+                dy = Math.Min(dy, SE.sprite.Position.Y  - map.tileSize /2 - GetY() - halfSizeY - 0.001f);
             }
             if (!SW.passable)
             {
-                dy = Math.Min(dy, SW.sprite.Position.Y - map.tileSize / 2 - GetY() - halfSizeY);
+                dy = Math.Min(dy, SW.sprite.Position.Y - map.tileSize / 2 - GetY() - halfSizeY - 0.001f);
             }
 
             if (!Keyboard.IsKeyPressed(Keyboard.Key.S))
@@ -238,7 +238,7 @@ namespace BoringGame
                 {
                     if (GetY() + halfSizeY < platform.GetPlatformY() && GetY() + halfSizeY + dy > platform.GetPlatformY() && GetX() + halfSizeX > platform.GetX() - platform.halfWidth && GetX() - halfSizeX < platform.GetX() + platform.halfWidth)
                     {
-                        dy = Math.Min(dy, platform.GetPlatformY() - GetY() - halfSizeY);
+                        dy = Math.Min(dy, platform.GetPlatformY() - GetY() - halfSizeY - 0.001f);
                         //this.SetX(GetX() + platform.previousDX); //TODO collision with player and wall
                         this.MoveX(CollisionCheckRight(platform.previousDX, map));
                     }
@@ -246,7 +246,7 @@ namespace BoringGame
             }
 
 
-            return dy - 0.001f;
+            return dy;
         }
 
         public float CollisionCheckUp(float dy, Map map)
@@ -260,14 +260,14 @@ namespace BoringGame
 
             if (!NE.passable)
             {
-                dy = Math.Max(dy, NE.sprite.Position.Y + map.tileSize / 2 - GetY() + halfSizeY);
+                dy = Math.Max(dy, NE.sprite.Position.Y + map.tileSize / 2 - GetY() + halfSizeY + 0.001f);
             }
             if (!NW.passable)
             {
-                dy = Math.Max(dy, NW.sprite.Position.Y + map.tileSize / 2 - GetY() + halfSizeY);
+                dy = Math.Max(dy, NW.sprite.Position.Y + map.tileSize / 2 - GetY() + halfSizeY + 0.001f);
             }
 
-            return dy + 0.001f;
+            return dy;
         }
 
         public float CollisionCheckRight(float dx, Map map)
@@ -280,14 +280,14 @@ namespace BoringGame
 
             if (!NE.passable)
             {
-                dx = Math.Min(dx, NE.sprite.Position.X - map.tileSize / 2 - GetX() - halfSizeX);
+                dx = Math.Min(dx, NE.sprite.Position.X - map.tileSize / 2 - GetX() - halfSizeX - 0.001f);
             }
             if (!SE.passable)
             {
-                dx = Math.Min(dx, SE.sprite.Position.X - map.tileSize / 2 - GetX() - halfSizeX);
+                dx = Math.Min(dx, SE.sprite.Position.X - map.tileSize / 2 - GetX() - halfSizeX - 0.001f);
             }
 
-            return dx - 0.001f;
+            return dx;
         }
 
 
@@ -302,14 +302,14 @@ namespace BoringGame
 
             if (!NW.passable)
             {
-                dx = Math.Max(dx, NW.sprite.Position.X + map.tileSize / 2 - GetX() + halfSizeX);
+                dx = Math.Max(dx, NW.sprite.Position.X + map.tileSize / 2 - GetX() + halfSizeX + 0.001f);
             }
             if (!SW.passable)
             {
-                dx = Math.Max(dx, SW.sprite.Position.X + map.tileSize / 2 - GetX() + halfSizeX);
+                dx = Math.Max(dx, SW.sprite.Position.X + map.tileSize / 2 - GetX() + halfSizeX + 0.001f);
             }
 
-            return dx + 0.001f;
+            return dx;
         }
 
 

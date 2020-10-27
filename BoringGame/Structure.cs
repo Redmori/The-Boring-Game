@@ -42,8 +42,11 @@ namespace BoringGame
         public float CollisionCheckRightN(float dx, Map map)
         {
             Tile tile = map.TileAtCoords(GetX() + dx + this.GetSprite().Texture.Size.X / 2, GetY());
+            if (tile == null)
+                return 0;
+
             if (!tile.passable)
-                return Math.Min(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - this.GetSprite().Texture.Size.X / 2);
+                return Math.Max(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - this.GetSprite().Texture.Size.X / 2);
 
             return dx;
         }
