@@ -10,6 +10,7 @@ namespace BoringGame
         Cart,
         Platform,
         Ladder,
+        Drill,
         Furnace,
 
         Count
@@ -39,8 +40,10 @@ namespace BoringGame
             return true;
         }
 
-        public float CollisionCheckRightN(float dx, Map map)
+        public virtual float CollisionCheckRightN(float dx, Map map)
         {
+            //WARNING CHECK DRILL COLLISION WHEN CHANGING THIS WARNING
+
             Tile tile = map.TileAtCoords(GetX() + dx + this.GetSprite().Texture.Size.X / 2, GetY());
             if (tile == null)
                 return 0;

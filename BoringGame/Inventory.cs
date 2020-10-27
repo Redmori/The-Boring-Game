@@ -23,7 +23,8 @@ namespace BoringGame
             contents[0] = StructureType.Cart;
             contents[1] = StructureType.Ladder;
             contents[2] = StructureType.Platform;
-            contents[3] = StructureType.Furnace;
+            contents[3] = StructureType.Drill;
+            contents[4] = StructureType.Furnace;
         }
 
         public GameObject CheckBuilding(Vector2f mousePos, Map map)
@@ -217,6 +218,10 @@ namespace BoringGame
                 if (buildingMode == StructureType.Ladder)
                 {
                     newObject = new Ladder(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                }
+                else if(buildingMode == StructureType.Drill)
+                {
+                    newObject = new Drill (platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
                 }
                 else //buildingMode == regular structure
                 {
