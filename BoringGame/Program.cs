@@ -18,10 +18,10 @@ namespace BoringGame
         public static View view;
 
         //TODO remove mouse and player loading and put it in SpriteManager
-        public static Texture mouse_tex = new Texture("../../Content/Mouse.png");
+        public static Texture mouse_tex = new Texture("../../../Content/Mouse.png");
         public static Sprite mouse_sprite;
 
-        public static Texture player_tex = new Texture("../../Content/Player.png");
+        public static Texture player_tex = new Texture("../../../Content/Player.png");
 
         public static uint windowWidth = 1024;
         public static uint windowHeight = 760;
@@ -76,7 +76,7 @@ namespace BoringGame
             //initialize texts
             texts = new List<Text>();
 
-            Font arial = new Font("../../Content/ArialCEMTBlack.ttf");
+            Font arial = new Font("../../../Content/ArialCEMTBlack.ttf");
             Text exampleText = new Text("test", arial);
             exampleText.Position = new Vector2f(windowWidth / 2, windowHeight / 2);
             texts.Add(exampleText);
@@ -172,7 +172,7 @@ namespace BoringGame
                 float dx = map.drivingCart.cartSpeed * dt;
                 foreach(Structure structure in map.structures)
                 {
-                    dx = structure.CollisionCheckRightN(dx, map);
+                    dx = Math.Min(dx, structure.CollisionCheckRightN(dx, map));
                 }
 
                 foreach(Cart cart in map.carts)

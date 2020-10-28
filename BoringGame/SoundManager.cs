@@ -8,7 +8,8 @@ namespace BoringGame
     class SoundManager
     {
 
-        public static SoundBuffer error_snd = new SoundBuffer("../../Content/error.wav");
+        public static string path = "../../../Content/";
+        public static SoundBuffer error_snd = new SoundBuffer(path + "Error.wav");
         public static Sound errorSound;
 
 
