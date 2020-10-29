@@ -12,6 +12,7 @@ namespace BoringGame
         public static string path = "../../../Content/";
         public static Texture empty_tex = new Texture(path + "Empty.png");
         public static Texture ground_tex = new Texture(path + "Ground.png");
+        public static Texture rock_tex = new Texture(path + "Rock.png");
         public static Texture hard_tex = new Texture(path + "Hard.png");
         public static Texture player_tex = new Texture(path + "Player.png");
         public static Texture mouse_tex = new Texture(path + "Mouse.png");
@@ -101,6 +102,11 @@ namespace BoringGame
                     tileSprite = new Sprite(hard_tex);
                     break;
                 }
+                case Type.Rock:
+                    {
+                        tileSprite = new Sprite(rock_tex);
+                        break;
+                    }
 
             }
 

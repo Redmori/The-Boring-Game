@@ -9,6 +9,7 @@ namespace BoringGame
     public enum Type{
         Empty,
         Ground,
+        Rock,
         Hard,
 
         Count
@@ -29,12 +30,12 @@ namespace BoringGame
             passable = true;
             minable = true;
 
-            health = 100;
-            healthFull = 100;
+            SetHealth(10);
         }
 
         public void SetType(Type newType)
         {
+            type = newType;
             sprite = SpriteManager.ChangeSprite(newType, sprite);
             switch (newType)
             {
@@ -56,9 +57,20 @@ namespace BoringGame
                     minable = false;
                     break;
                 }
+                case Type.Rock:
+                    {
+                        passable = false;
+                        minable = true;
+                        SetHealth(100);
+                        break;
+                    }
             }
         }
-
+        public void SetHealth(int h)
+        {
+            health = h;
+            healthFull = h;
+        }
         public void Mine(float power , Map map)
         {
             health -= power;

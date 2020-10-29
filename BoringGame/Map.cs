@@ -62,6 +62,23 @@ namespace BoringGame
             return tiles[loc.X][loc.Y];
         }
 
+        public void CreateCluster(int x, int y, Type type)
+        {
+            if (y > 1 && y < height - 1 && x > 1 && x < width && tiles[x][y] != null && tiles[x][y].type == Type.Ground)
+            {
+                tiles[x][y].SetType(type);
+                Random r = new Random();
+                if (r.Next(0, 100) > 70)
+                    CreateCluster(x + 1, y, type);
+                if (r.Next(0, 100) > 70)
+                    CreateCluster(x - 1, y, type);
+                if (r.Next(0, 100) > 70)
+                    CreateCluster(x, y + 1, type);
+                if (r.Next(0, 100) > 70)
+                    CreateCluster(x, y - 1, type);
+            }
+        }
+
         public void AddColumn()
         {
             Tile[] newColumn = new Tile[height];
@@ -81,6 +98,7 @@ namespace BoringGame
                 Tile newTile = new Tile(tileSprite);
                 newTile.passable = false;
                 newTile.minable = minable;
+                newTile.type = Type.Ground;
                 newColumn[j] = newTile;
             }
             tiles.Add(newColumn);
@@ -88,6 +106,17 @@ namespace BoringGame
             ChangeColumn(Type.Hard, 0);
             progress++;
             Console.WriteLine("adding line: " + progress);
+
+            //Add resources
+            Random r = new Random();
+            for (int j = 0; j < height; j++)
+            {
+                if (r.Next(0, 100) > 97)
+                {
+                    CreateCluster((int)width - 1, j, Type.Rock);
+                    //TODO: clusters made on the map cant propogate to the right, make it so that these propogations are saved and created when another column is added
+                }
+            }
         }
 
         public void InitMap()
@@ -117,12 +146,25 @@ namespace BoringGame
                         passable = false;
                     }
                     Tile newTile = new Tile(SpriteManager.GetSprite(type, i * tileSize, j * tileSize));
+                    newTile.type = type;
                     newTile.passable = passable;
                     newTile.minable = minable;
                     newColumn[j] = newTile;
 
                 }
                 tiles.Add(newColumn);
+            }
+
+            Random r = new Random();
+            for (int i = 0; i < width; i++)
+            {
+                for(int j = 0; j < height; j++)
+                {
+                    if(r.Next(0,100) > 97)
+                    {
+                        CreateCluster(i,j, Type.Rock);
+                    }
+                }
             }
         }
 
