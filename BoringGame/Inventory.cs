@@ -25,6 +25,9 @@ namespace BoringGame
             contents[2] = StructureType.Platform;
             contents[3] = StructureType.Drill;
             contents[4] = StructureType.Furnace;
+            contents[5] = StructureType.Axle;
+            contents[6] = StructureType.Motor;
+            contents[7] = StructureType.Drillhead;
         }
 
         public GameObject CheckBuilding(Vector2f mousePos, Map map)
@@ -104,6 +107,34 @@ namespace BoringGame
 
 
             }
+            else if (buildingMode == StructureType.Axle || buildingMode == StructureType.Drillhead)
+            {
+                Console.WriteLine("building axle...");
+                Axle closestAxle = null;
+                float closestDist = float.MaxValue;
+                foreach(Axle nearAxle in map.axles)
+                {
+                    Console.WriteLine("axle found");
+                    float dist = (nearAxle.GetX() - mousePos.X) * (nearAxle.GetX() - mousePos.X) + (nearAxle.GetY() - mousePos.Y) * (nearAxle.GetY() - mousePos.Y);
+                    if(dist < closestDist && nearAxle.rightOpen) //temp only check right side, TODO: check all axle sides and find locally closest from that
+                    {
+                        closestAxle = nearAxle;
+                        closestDist = dist;
+                    }
+                }
+                if(closestAxle != null)
+                {
+                    Console.WriteLine("attempting to draw?");
+                    buildingSprite.Position = new Vector2f(closestAxle.GetX() + 50f, closestAxle.GetY());
+
+                    //if mouse is clicked, place the actual structure
+                    if (Mouse.IsButtonPressed (Mouse.Button.Left))
+                    {
+                        return PlaceAxle(closestAxle, map);
+                    }
+
+                }
+            }
             else
             {
                 Platform closestPlatform = null;
@@ -130,7 +161,9 @@ namespace BoringGame
                     //if mouse is clicked, place the actual structure
                     if (Mouse.IsButtonPressed(Mouse.Button.Left))
                     {
-                        return PlaceBuilding(closestPlatform, closestSlot);
+                        GameObject newObject = PlaceBuilding(closestPlatform, closestSlot);
+                        if (buildingMode == StructureType.Motor) map.axles.Add((Axle)newObject);
+                        return newObject;
                     }
                 }
             }            
@@ -207,6 +240,22 @@ namespace BoringGame
             return newCart;
         }
 
+        public Axle PlaceAxle(Axle connectingAxle, Map map)
+        {
+            building = false;
+            Axle newAxle = new Axle(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2); //TEMP TODO side = 2 is only right side hard coded for now
+            newAxle.torque = connectingAxle.torque;
+            newAxle.SetSprite(buildingSprite);
+            buildingSprite.Color = new Color(255, 255, 255, 255);
+            buildingSprite = null;
+
+            map.axles.Add(newAxle);
+            connectingAxle.Right = newAxle;
+            connectingAxle.rightOpen = false;
+
+            return newAxle;
+        }
+
         public GameObject PlaceBuilding(Platform platform, int slot) 
         {
             building = false;
@@ -222,6 +271,10 @@ namespace BoringGame
                 else if(buildingMode == StructureType.Drill)
                 {
                     newObject = new Drill (platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                }
+                else if(buildingMode == StructureType.Motor)
+                {
+                    newObject = new Motor(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y, null, 3);
                 }
                 else //buildingMode == regular structure
                 {

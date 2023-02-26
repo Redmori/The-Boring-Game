@@ -23,6 +23,9 @@ namespace BoringGame
         public static Texture platform_tex = new Texture(path + "Platform.png");
         public static Texture drill_tex = new Texture(path + "Drill.png");
         public static Texture furnace_tex = new Texture(path + "Furnace.png");
+        public static Texture axle_tex = new Texture(path + "Axle.png");
+        public static Texture motor_tex = new Texture(path + "Motor.png");
+        public static Texture drillhead_tex = new Texture(path + "Drillhead.png");
 
         public static Texture test_tex = new Texture(path + "testtileset.png");
 
@@ -63,6 +66,21 @@ namespace BoringGame
                 case StructureType.Furnace:
                     {
                         structSprite = new Sprite(furnace_tex);
+                        break;
+                    }
+                case StructureType.Axle:
+                    {
+                        structSprite = new Sprite(axle_tex);
+                        break;
+                    }
+                case StructureType.Motor:
+                    {
+                        structSprite = new Sprite(motor_tex);
+                        break;
+                    }
+                case StructureType.Drillhead:
+                    {
+                        structSprite = new Sprite(drillhead_tex);
                         break;
                     }
             }

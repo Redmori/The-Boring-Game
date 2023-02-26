@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.WebSockets;
+using System.Reflection.Emit;
 using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
@@ -31,7 +32,7 @@ namespace BoringGame
 
         public static Player player;
         public static List<GameObject> gameObjects;
-        public static List<Text> texts;
+        public static List<UIText> uitexts;
 
         public static Map map;
         
@@ -74,12 +75,14 @@ namespace BoringGame
 
 
             //initialize texts
-            texts = new List<Text>();
+            uitexts = new List<UIText>();
 
             Font arial = new Font("../../../Content/ArialCEMTBlack.ttf");
-            Text exampleText = new Text("test", arial);
-            exampleText.Position = new Vector2f(windowWidth / 2, windowHeight / 2);
-            texts.Add(exampleText);
+            Text exampleText = new Text("1 Cart        2 Ladder        3 Platform        4 Drill        5 Furnace", arial);
+            exampleText.Color = Color.Red;
+            exampleText.Origin = new Vector2f(0, exampleText.GetLocalBounds().Height);
+            UIText exampleUIText = new UIText(exampleText, new Vector2f(-windowWidth/2 + 10f, windowHeight/2 - 20f));
+            uitexts.Add(exampleUIText);
 
 
             //initialize gameobjects
@@ -178,6 +181,14 @@ namespace BoringGame
                 foreach(Cart cart in map.carts)
                 {
                     cart.MoveCartN(dx, map);
+                    //TEMP moving axles, probably better way to do this
+                    foreach (Axle axle in map.axles)
+                    {
+                        if (!(axle is Motor))
+                        {
+                            axle.MoveX(dx);
+                        }
+                    }
                 }
 
                 //bool moved = map.drivingCart.MoveCart(dt, map);
@@ -243,11 +254,16 @@ namespace BoringGame
             player.GetSprite().Draw(window, RenderStates.Default);
 
 
-            //Draw the texts
-            foreach (Text text in texts)
+            //Draw the UI texts
+            foreach (UIText text in uitexts)
             {
-                text.Draw(window, RenderStates.Default);
+                text.UpdatePosition(view.Center);
+                text.text.Draw(window, RenderStates.Default);
+                window.Draw(text.text, RenderStates.Default);
+                window.Draw(text.text);
             }
+
+            //TODO: implement world space texts, and timer texts etc
 
             //Draw building indicator
             player.inventory.DrawBuildingSprite(window);

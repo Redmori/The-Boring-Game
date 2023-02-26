@@ -12,6 +12,9 @@ namespace BoringGame
         Ladder,
         Drill,
         Furnace,
+        Axle,
+        Motor,
+        Drillhead,
 
         Count
     }
