@@ -15,6 +15,7 @@ namespace BoringGame
         Axle,
         Motor,
         Drillhead,
+        Cog,
 
         Count
     }

@@ -26,6 +26,7 @@ namespace BoringGame
         public static Texture axle_tex = new Texture(path + "Axle.png");
         public static Texture motor_tex = new Texture(path + "Motor.png");
         public static Texture drillhead_tex = new Texture(path + "Drillhead.png");
+        public static Texture cog_tex = new Texture(path + "Cog.png");
 
         public static Texture test_tex = new Texture(path + "testtileset.png");
 
@@ -81,6 +82,11 @@ namespace BoringGame
                 case StructureType.Drillhead:
                     {
                         structSprite = new Sprite(drillhead_tex);
+                        break;
+                    }
+                case StructureType.Cog:
+                    {
+                        structSprite = new Sprite(cog_tex);
                         break;
                     }
             }

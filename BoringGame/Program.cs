@@ -12,7 +12,7 @@ namespace BoringGame
 {
     class Program
     {
-        public static bool debugFPS = false;
+        public static bool debugFPS = false; //TEST fps counter
 
         public static ContextSettings context = new ContextSettings();
         public static RenderWindow window;
@@ -172,6 +172,9 @@ namespace BoringGame
             //Move Carts
             if (map.drivingCart != null)
             {
+                //TEST speedup:
+                //map.drivingCart.cartSpeed = map.drivingCart.cartSpeed * 1.0001f;
+
                 float dx = map.drivingCart.cartSpeed * dt;
                 foreach(Structure structure in map.structures)
                 {
@@ -181,15 +184,16 @@ namespace BoringGame
                 foreach(Cart cart in map.carts)
                 {
                     cart.MoveCartN(dx, map);
-                    //TEMP moving axles, probably better way to do this
-                    foreach (Axle axle in map.axles)
+                }
+                //TEMP moving axles, probably better way to do this
+                foreach (Axle axle in map.axles)
+                {
+                    if (!(axle is Motor))
                     {
-                        if (!(axle is Motor))
-                        {
-                            axle.MoveX(dx);
-                        }
+                        axle.MoveX(dx);
                     }
                 }
+
 
                 //bool moved = map.drivingCart.MoveCart(dt, map);
                 //foreach(Cart cart in map.carts)

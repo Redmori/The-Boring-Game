@@ -28,6 +28,7 @@ namespace BoringGame
             contents[5] = StructureType.Axle;
             contents[6] = StructureType.Motor;
             contents[7] = StructureType.Drillhead;
+            contents[8] = StructureType.Cog;
         }
 
         public GameObject CheckBuilding(Vector2f mousePos, Map map)
@@ -107,34 +108,80 @@ namespace BoringGame
 
 
             }
-            else if (buildingMode == StructureType.Axle || buildingMode == StructureType.Drillhead)
+            //OLD
+            //else if (buildingMode == StructureType.Axle || buildingMode == StructureType.Drillhead || buildingMode == StructureType.Cog)
+            //{
+            //    Axle closestAxle = null;
+            //    float closestDist = float.MaxValue;
+            //    foreach(Axle nearAxle in map.axles)
+            //    {
+            //        float dist = (nearAxle.GetX() - mousePos.X + Structure.structureSize) * (nearAxle.GetX() - mousePos.X + Structure.structureSize) + (nearAxle.GetY() - mousePos.Y) * (nearAxle.GetY() - mousePos.Y);
+            //        if(dist < closestDist && nearAxle.rightOpen) //temp only check right side, TODO: check all axle sides and find locally closest from that
+            //        {
+            //            closestAxle = nearAxle;
+            //            closestDist = dist;
+            //        }
+            //        //TEMP look for the top of a cog TODO fix bottom aswel
+
+            //        if(buildingMode == StructureType.Cog && nearAxle is Cog)
+            //        {
+            //            float distCog = (nearAxle.GetX() - mousePos.X) * (nearAxle.GetX() - mousePos.X) + (nearAxle.GetY() + Structure.structureSize - mousePos.Y) * (nearAxle.GetY() - Structure.structureSize - mousePos.Y);
+            //            if(nearAxle.bottomOpen && distCog < closestDist)
+            //            {
+            //                closestAxle = nearAxle;
+            //                closestDist = distCog;
+            //            }
+            //        }
+
+            //    }
+            //    if(closestAxle != null)
+            //    {
+            //        buildingSprite.Position = new Vector2f(closestAxle.GetX() + Structure.structureSize, closestAxle.GetY());
+            //        if(buildingMode == StructureType.Cog && closestAxle is Cog)
+            //            buildingSprite.Position = new Vector2f(closestAxle.GetX(), closestAxle.GetY() + Structure.structureSize);
+
+            //        //if mouse is clicked, place the actual structure
+            //        if (Mouse.IsButtonPressed (Mouse.Button.Left))
+            //        {
+            //            return PlaceAxle(closestAxle, map);
+            //        }
+
+            //    }
+            //}
+
+            else if (buildingMode == StructureType.Axle || buildingMode == StructureType.Drillhead || buildingMode == StructureType.Cog)
             {
-                Console.WriteLine("building axle...");
                 Axle closestAxle = null;
                 float closestDist = float.MaxValue;
-                foreach(Axle nearAxle in map.axles)
+                OrthSlot closestSide = OrthSlot.Top;
+                foreach (Axle nearAxle in map.axles)
                 {
-                    Console.WriteLine("axle found");
-                    float dist = (nearAxle.GetX() - mousePos.X) * (nearAxle.GetX() - mousePos.X) + (nearAxle.GetY() - mousePos.Y) * (nearAxle.GetY() - mousePos.Y);
-                    if(dist < closestDist && nearAxle.rightOpen) //temp only check right side, TODO: check all axle sides and find locally closest from that
+                    (OrthSlot slot, float dist) = nearAxle.FindClosestOpenSlot(mousePos);
+                    if (dist < closestDist)
                     {
-                        closestAxle = nearAxle;
                         closestDist = dist;
+                        closestAxle = nearAxle;
+                        closestSide = slot;
                     }
                 }
-                if(closestAxle != null)
+                if (closestAxle != null && closestDist != float.MaxValue)
                 {
-                    Console.WriteLine("attempting to draw?");
-                    buildingSprite.Position = new Vector2f(closestAxle.GetX() + 50f, closestAxle.GetY());
+                    buildingSprite.Position = closestAxle.GetNeighbourCoordinates(closestSide);
+                   // if (buildingMode == StructureType.Cog && closestAxle is Cog)
+                   //     buildingSprite.Position = new Vector2f(closestAxle.GetX(), closestAxle.GetY() + Structure.structureSize);
 
                     //if mouse is clicked, place the actual structure
-                    if (Mouse.IsButtonPressed (Mouse.Button.Left))
+                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
                     {
-                        return PlaceAxle(closestAxle, map);
+                        //TODO generalise this to work for all axle types properly, copy what was done for Cogs
+                        return PlaceAxle(closestAxle, map, closestSide);
                     }
 
                 }
+
+
             }
+
             else
             {
                 Platform closestPlatform = null;
@@ -240,18 +287,34 @@ namespace BoringGame
             return newCart;
         }
 
-        public Axle PlaceAxle(Axle connectingAxle, Map map)
+        public Axle PlaceAxle(Axle connectingAxle, Map map, OrthSlot side)
         {
             building = false;
-            Axle newAxle = new Axle(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2); //TEMP TODO side = 2 is only right side hard coded for now
+            Axle newAxle;
+            if (buildingMode == StructureType.Drillhead)
+                newAxle = new Drillhead(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2);
+            else if (buildingMode == StructureType.Cog)
+            {
+                if(connectingAxle is Cog)
+                    newAxle = new Cog(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);   //TEMP TODO open side = TOP & RIGHT hardcoded
+                else
+                    newAxle = new Cog(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);   //TEMP TODO open side = TOP & RIGHT hardcoded
+            }
+                
+            else
+                newAxle = new Axle(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2); //TEMP TODO side = 2 is only right side hard coded for now
             newAxle.torque = connectingAxle.torque;
             newAxle.SetSprite(buildingSprite);
             buildingSprite.Color = new Color(255, 255, 255, 255);
             buildingSprite = null;
 
             map.axles.Add(newAxle);
-            connectingAxle.Right = newAxle;
-            connectingAxle.rightOpen = false;
+            if (!(buildingMode == StructureType.Cog && connectingAxle is Cog))
+            {
+                Console.WriteLine("Right closed");
+                connectingAxle.Right = newAxle;
+                connectingAxle.rightOpen = false;
+            }
 
             return newAxle;
         }
