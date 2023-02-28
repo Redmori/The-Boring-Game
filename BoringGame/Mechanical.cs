@@ -238,8 +238,7 @@ namespace BoringGame
         public float drillPower;
         public Drillhead(float x, float y, Axle connectingAxle, int connectingSide) : base(x, y, connectingAxle, connectingSide)
         {
-            drillPower = 10000f;
-            //drillPower = 0.1f;
+            drillPower = 0.1f;
         }        
         public override float CollisionCheckRightN(float dx, Map map)
         {
