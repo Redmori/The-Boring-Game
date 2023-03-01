@@ -48,12 +48,23 @@ namespace BoringGame
         {
             //WARNING CHECK DRILL COLLISION WHEN CHANGING THIS WARNING
 
-            Tile tile = map.TileAtCoords(GetX() + dx + this.GetSprite().Texture.Size.X / 2, GetY());
+            //Tile tile = map.TileAtCoords(GetX() + dx + this.GetSprite().Texture.Size.X / 2, GetY());
+            //if (tile == null)
+            //    return 0;
+
+            //if (!tile.passable)
+            //    return Math.Max(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - this.GetSprite().Texture.Size.X / 2);
+
+            //return dx;
+
+            float rightX = GetSprite().GetGlobalBounds().Left + GetSprite().GetGlobalBounds().Width;
+
+            Tile tile = map.TileAtCoords(rightX + dx , GetY());
             if (tile == null)
                 return 0;
 
             if (!tile.passable)
-                return Math.Max(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - this.GetSprite().Texture.Size.X / 2);
+                return Math.Max(0f, tile.sprite.Position.X - map.tileSize / 2 - rightX);
 
             return dx;
         }

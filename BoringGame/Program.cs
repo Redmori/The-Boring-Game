@@ -12,7 +12,7 @@ namespace BoringGame
 {
     class Program
     {
-        public static bool debugFPS = false; //TEST fps counter
+        public static bool debugFPS = true; //TEST fps counter
 
         public static ContextSettings context = new ContextSettings();
         public static RenderWindow window;
@@ -35,6 +35,8 @@ namespace BoringGame
         public static List<UIText> uitexts;
 
         public static Map map;
+        public static Bore bore;
+        public static bool firstCart = true;
         
 
 
@@ -171,37 +173,35 @@ namespace BoringGame
 
 
             //Move Carts
-            if (map.drivingCart != null)
+            if (bore != null)
             {
+                float dx = bore.GetSpeed() * dt;
+                dx = bore.CollisionCheckRight(dx, map);
+                bore.Move(dx);
+
                 //TEST speedup:
                 //map.drivingCart.cartSpeed = map.drivingCart.cartSpeed * 1.0001f;
 
-                float dx = map.drivingCart.cartSpeed * dt;
-                foreach(Structure structure in map.structures)
-                {
-                    dx = Math.Min(dx, structure.CollisionCheckRightN(dx, map));
-                }
+                //float dx = map.drivingCart.cartSpeed * dt;
+                //foreach(Structure structure in map.structures)
+                //{
+                //    dx = Math.Min(dx, structure.CollisionCheckRightN(dx, map));
+                //}
 
-                foreach(Cart cart in map.carts)
-                {
-                    cart.MoveCartN(dx, map);
-                }
-                //TEMP moving axles, probably better way to do this
-                foreach (Axle axle in map.axles)
-                {
-                    if (!(axle is Motor))
-                    {
-                        axle.MoveX(dx);
-                    }
-                }
-
-
-                //bool moved = map.drivingCart.MoveCart(dt, map);
                 //foreach(Cart cart in map.carts)
                 //{
-                //    if(cart != map.drivingCart) //move all other carts if the driving cart moved
-                //        cart.MoveCart(moved ? dt : 0, map);
+                //    cart.MoveCartN(dx, map);
                 //}
+                ////TEMP moving axles, probably better way to do this
+                //foreach (Axle axle in map.axles)
+                //{
+                //    if (!(axle is Motor))
+                //    {
+                //        axle.MoveX(dx);
+                //    }
+                //}
+
+
             }
 
 
@@ -215,14 +215,23 @@ namespace BoringGame
             //}
 
             //Check the inventory for building
-            GameObject newGameObject = player.inventory.CheckBuilding(window.MapPixelToCoords(Mouse.GetPosition(window)), map);
+            GameObject newGameObject = player.inventory.CheckBuilding(window.MapPixelToCoords(Mouse.GetPosition(window)), map, bore);
             if(newGameObject != null)
             {
                 gameObjects.Add(newGameObject);
                 if(newGameObject is Structure)
-                    map.structures.Add((Structure)newGameObject);
+                    //map.structures.Add((Structure)newGameObject);
                 if(newGameObject is Ladder)
                     map.ladders.Add((Ladder)newGameObject);
+                if(newGameObject is Cart && firstCart)
+                {
+                    bore = new Bore((Cart)newGameObject);
+                    firstCart = false;
+                }
+                else if(newGameObject is Cart)
+                {
+                    bore.AddCart((Cart)newGameObject,2);
+                }
             }
 
 

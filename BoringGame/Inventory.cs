@@ -31,7 +31,7 @@ namespace BoringGame
             contents[8] = StructureType.Cog;
         }
 
-        public GameObject CheckBuilding(Vector2f mousePos, Map map)
+        public GameObject CheckBuilding(Vector2f mousePos, Map map, Bore bore)
         {
            
             if(!building && HotKeyPressed() != -1)
@@ -51,28 +51,33 @@ namespace BoringGame
 
             if (building && buildingSprite != null) //place building indicator on the closest slot of a platform
             {
-                return UpdateBuilding(mousePos, map);                                
+                return UpdateBuilding(mousePos, map, bore);                                
             }
             return null;
         }
 
-        public GameObject UpdateBuilding(Vector2f mousePos, Map map)
+        public GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore)
         {
             if (buildingMode == StructureType.Cart)
             {
 
-                if (map.drivingCart != null)
+                if (bore != null)
                 {
-                    float totalWidth = 0;
-                    foreach (Cart cart in map.carts)
-                    {
-                        totalWidth += cart.halfWidth * 2;
-                    }
-                    totalWidth = totalWidth - map.drivingCart.halfWidth + map.tileSize; //TODO map.tileSize = halfwidth of the placing cart
-                    buildingSprite.Position = new Vector2f(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y);
+                    //float totalWidth = 0;
+                    //foreach (Cart cart in map.carts)
+                    //{
+                    //    totalWidth += cart.halfWidth * 2;
+                    //}
+                    //totalWidth = totalWidth - map.drivingCart.halfWidth + map.tileSize; //TODO map.tileSize = halfwidth of the placing cart
+                    //buildingSprite.Position = new Vector2f(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y);
+                    
+                    Vector2f backpos = bore.IndextoCoords(new Vector2i(bore.GetSize().X, 0));
+
+                    buildingSprite.Position = backpos;
 
                     if (Mouse.IsButtonPressed(Mouse.Button.Left))
-                        return PlaceCart(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y, map);
+                        return PlaceCart(backpos.X,backpos.Y,map);
+                    //    return PlaceCart(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y, map);
                 }
                 else
                 {
@@ -184,35 +189,55 @@ namespace BoringGame
 
             else
             {
-                Platform closestPlatform = null;
-                int closestSlot = 0;
-                float closestDist = float.MaxValue;
-                foreach (Platform platform in map.platforms)
+                Vector2i pos = bore.FindClosestSupportedSlot(mousePos);
+                Console.WriteLine(pos.ToString());
+                if (pos.X != -1)
                 {
-                    for (int i = 0; i < platform.slots; i++)
-                    {
-                        Vector2f slotPos = platform.GetSlotPosition(i);
-                        float dist = (slotPos.X - mousePos.X) * (slotPos.X - mousePos.X) + (slotPos.Y - mousePos.Y) * (slotPos.Y - mousePos.Y);
-                        if (dist < closestDist)
-                        {
-                            closestPlatform = platform;
-                            closestDist = dist;
-                            closestSlot = i;
-                        }
-                    }
-                }
-                if (closestPlatform != null)
-                {
-                    buildingSprite.Position = closestPlatform.GetSlotPosition(closestSlot);
+                    //var line = new VertexArray(PrimitiveType.Lines, 2);
+                    //line[0] = new Vertex(bore.IndextoCoords(new Vector2i(0,0)));
+                    //line[1] = new Vertex(bore.IndextoCoords(pos));
+                    //Program.window.Draw(line);
+                                       
 
-                    //if mouse is clicked, place the actual structure
+                    buildingSprite.Position = bore.IndextoCoords(pos);
+
                     if (Mouse.IsButtonPressed(Mouse.Button.Left))
                     {
-                        GameObject newObject = PlaceBuilding(closestPlatform, closestSlot);
+                        GameObject newObject = PlaceBuilding(pos,bore);
                         if (buildingMode == StructureType.Motor) map.axles.Add((Axle)newObject);
                         return newObject;
                     }
                 }
+
+                //Platform closestPlatform = null;
+                //int closestSlot = 0;
+                //float closestDist = float.MaxValue;
+                //foreach (Platform platform in map.platforms)
+                //{
+                //    for (int i = 0; i < platform.slots; i++)
+                //    {
+                //        Vector2f slotPos = platform.GetSlotPosition(i);
+                //        float dist = (slotPos.X - mousePos.X) * (slotPos.X - mousePos.X) + (slotPos.Y - mousePos.Y) * (slotPos.Y - mousePos.Y);
+                //        if (dist < closestDist)
+                //        {
+                //            closestPlatform = platform;
+                //            closestDist = dist;
+                //            closestSlot = i;
+                //        }
+                //    }
+                //}
+                //if (closestPlatform != null)
+                //{
+                //    buildingSprite.Position = closestPlatform.GetSlotPosition(closestSlot);
+
+                //    //if mouse is clicked, place the actual structure
+                //    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                //    {
+                //        GameObject newObject = PlaceBuilding(closestPlatform, closestSlot);
+                //        if (buildingMode == StructureType.Motor) map.axles.Add((Axle)newObject);
+                //        return newObject;
+                //    }
+                //}
             }            
             return null;
         }
@@ -279,10 +304,10 @@ namespace BoringGame
             buildingSprite.Color = new Color(255, 255, 255, 255);
             buildingSprite = null;
 
-            map.carts.Add(newCart);
+            //map.carts.Add(newCart);
             map.platforms.Add(newCart);
-            if(map.drivingCart == null)
-                map.drivingCart = newCart;
+            //if(map.drivingCart == null)
+            //    map.drivingCart = newCart;
 
             return newCart;
         }
@@ -319,32 +344,37 @@ namespace BoringGame
             return newAxle;
         }
 
-        public GameObject PlaceBuilding(Platform platform, int slot) 
+        public GameObject PlaceBuilding(Vector2i indexLoc, Bore br) 
         {
             building = false;
 
-            if (platform.structures[slot] == null)
+            if (indexLoc.X != -1)
             {
                 Structure newObject;
 
                 if (buildingMode == StructureType.Ladder)
                 {
-                    newObject = new Ladder(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    newObject = null;
+                    //newObject = new Ladder(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
                 }
                 else if(buildingMode == StructureType.Drill)
                 {
-                    newObject = new Drill (platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    newObject = null;
+                    //newObject = new Drill (platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
                 }
                 else if(buildingMode == StructureType.Motor)
                 {
-                    newObject = new Motor(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y, null, 3);
+                    newObject = null;
+                    //newObject = new Motor(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y, null, 3);
                 }
                 else //buildingMode == regular structure
                 {
-                    newObject = new Structure(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    //newObject = new Structure(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    newObject = new Structure(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
                 }
 
-                platform.BuildStructure(newObject, slot);
+                br.AddStructure(newObject,indexLoc.X,indexLoc.Y);
+                //platform.BuildStructure(newObject, slot);
                 newObject.SetSprite(buildingSprite);
                 buildingSprite.Color = new Color(255, 255, 255, 255);
                 buildingSprite = null;

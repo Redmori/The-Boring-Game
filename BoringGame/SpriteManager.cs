@@ -45,7 +45,8 @@ namespace BoringGame
                 case StructureType.Cart:
                 {
                         structSprite = new Sprite(cart_tex);
-                         break;
+                        structSprite.Origin = new Vector2f(3*structSprite.Texture.Size.X / 4f, structSprite.Texture.Size.Y / 2f);
+                        break;
                 }
                 case StructureType.Platform:
                     {
@@ -90,7 +91,7 @@ namespace BoringGame
                         break;
                     }
             }
-            if(type != StructureType.Ladder && type != StructureType.Drill)
+            if(type != StructureType.Ladder && type != StructureType.Drill && type != StructureType.Cart)
                 structSprite.Origin = new Vector2f(structSprite.Texture.Size.X / 2f, structSprite.Texture.Size.Y / 2f);
             return structSprite;
         }
