@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using BoringGame;
+using SFML.System;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -8,7 +9,7 @@ using System.Text;
 namespace BoringGame
 {
     public enum SlotStatus
-    {   
+    {
         Open,
         Supported,
         Blocked
@@ -19,14 +20,16 @@ namespace BoringGame
         public SlotStatus[,] slotStatus;
         public Structure[,] structureMap;
         public float position;
+        float speed;
 
         public Bore(Cart firstCart)
         {
             position = firstCart.GetX();
-            slotStatus = new SlotStatus[0,0];
-            structureMap = new Structure[0,0];
-            AddCart(firstCart,2);
-            
+            slotStatus = new SlotStatus[0, 0];
+            structureMap = new Structure[0, 0];
+            AddCart(firstCart, 2);
+            speed = 0.1f;
+
         }
 
         public void AddCart(Cart cart, int size)
@@ -40,7 +43,7 @@ namespace BoringGame
                 for (int j = 0; j < slotStatus.GetLength(1); j++)
                 {
                     newStatus[i, j] = slotStatus[i, j];
-                    newStructureMap[i,j] = structureMap[i,j];
+                    newStructureMap[i, j] = structureMap[i, j];
                 }
             }
 
@@ -54,18 +57,65 @@ namespace BoringGame
             }
         }
 
-        public void AddStructure(Structure structure, int x, int y) 
+        public void AddStructure(Structure structure, int x, int y)
         {
             slotStatus[x, y] = SlotStatus.Blocked;
             slotStatus[x, y + 1] = SlotStatus.Supported;
             structureMap[x, y] = structure;
         }
 
-        //TODO implement next: returns the indexes of the slots at the position of the mouse or game world coordinates
-        public Vector2i GetCoordinates(Vector2f mousePos)
+        public void DetermineSpeed()
         {
-            return new Vector2i(0,0);
+            speed = 0.01f;
+            //Run every time a structure is added
+            //compare structure weights and cart strengths
         }
 
+        public float GetSpeed()
+        {
+            return speed;
+        }
+
+
+        public void Move(float dx)
+        {
+            //move all structures
+            position += dx;
+        }
+
+        public float CollisionCheckRight(float dx, Map map)
+        {
+            //loop over front structures to see how far we can move
+            float lowestDist = float.MaxValue;
+            for (int j = 0; j < structureMap.GetLength(0); j++)
+            {
+                for (int i = 0; i < structureMap.GetLength(1); i++)
+                {
+                    if (structureMap[i, j] != null)
+                    {
+                        float lowdx = structureMap[i, j].CollisionCheckRightN(dx, map);
+                        if (lowdx < lowestDist)
+                            lowestDist = lowdx;
+                        break;
+                    }
+                }
+            }
+            return lowestDist;
+        }
+
+        public Vector2i CoordsToIndex(Vector2f loc)
+        {
+            //maps world coordinates to bore slot positions using the x position of the bore
+
+            int ipos = (int)Math.Round((position - loc.X) / Structure.structureSize);
+            int jpos = (int)(Math.Round((30 - loc.Y) / Structure.structureSize) + 1); //TEMP 30 is map.height but we dont have access to that here
+            return new Vector2i(ipos, jpos);
+        }
+
+
+        public Structure StructureAtIndex(Vector2i index)
+        {
+            return structureMap[index.X, index.Y];
+        }
     }
 }
