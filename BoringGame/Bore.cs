@@ -91,10 +91,23 @@ namespace BoringGame
         public void AddStructure(Structure structure, int x, int y)
         {
             slotStatus[x, y] = SlotStatus.Blocked;
-            slotStatus[x, y + 1] = SlotStatus.Supported;
+            if(slotStatus[x, y + 1] != SlotStatus.Blocked)
+                slotStatus[x, y + 1] = SlotStatus.Supported;
             structureMap[x, y] = structure;
             if (!structures.Contains(structure))
                 structures.Add(structure);
+        }
+
+        public void AddPlatform(Cart cart)
+        {
+            for(int i = 0 ; i < structureMap.GetLength(0); i++)
+            {
+                int nPlatforms = cart.platforms.Count + 1; //Calculates the hight we need to place, since there are already platforms
+                if(structureMap[i, 0] == cart && slotStatus[i,1 + 2* nPlatforms] != SlotStatus.Blocked)
+                {
+                    slotStatus[i, 1 + 2* nPlatforms] = SlotStatus.Supported;
+                }
+            }
         }
 
         public void DetermineSpeed()
@@ -107,6 +120,11 @@ namespace BoringGame
         public float GetSpeed()
         {
             return speed;
+        }
+
+        public void SetSpeed(float spd)
+        {
+            this.speed = spd; ;
         }
 
 
@@ -122,10 +140,7 @@ namespace BoringGame
         {
             //loop over front structures to see how far we can move
             float lowestDist = float.MaxValue;
-            Console.WriteLine("Structures");
             foreach (Structure structure in structures) {
-                Console.WriteLine(structure.ToString());
-                Console.WriteLine(structures.Count);
                 float lowdx = structure.CollisionCheckRightN(dx, map);
                 if (lowdx < lowestDist)
                     lowestDist = lowdx;

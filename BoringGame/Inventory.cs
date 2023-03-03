@@ -75,7 +75,7 @@ namespace BoringGame
 
                     buildingSprite.Position = backpos;
 
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    if (Program.mousePressed)
                         return PlaceCart(backpos.X,backpos.Y,map);
                     //    return PlaceCart(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y, map);
                 }
@@ -83,13 +83,19 @@ namespace BoringGame
                 {
                     buildingSprite.Position = new Vector2f(mousePos.X, map.tiles[0][map.height - 2].sprite.Position.Y);
 
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    if (Program.mousePressed)
                         return PlaceCart(mousePos.X, map.tiles[0][map.height - 2].sprite.Position.Y, map);
                 }
-
+                return null;
 
             }
-            else if (buildingMode == StructureType.Platform)
+            if(bore == null)
+            {
+                building = false;
+                return null;
+            }
+
+            if (buildingMode == StructureType.Platform)
             {
                 //loop over all carts to see which one is closest x wise and place it on top of there
                 Cart closestCart = null;
@@ -107,8 +113,11 @@ namespace BoringGame
                     float platformY = closestCart.GetY() - (closestCart.platforms.Count + 1) * (2f * map.tileSize);
                     buildingSprite.Position = new Vector2f(closestCart.GetX(), platformY);
 
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    if (Program.mousePressed)
+                    {
+                        bore.AddPlatform(closestCart);
                         return PlacePlatform(closestCart.GetX(), platformY, closestCart, map);
+                    }
                 }
 
 
@@ -176,10 +185,12 @@ namespace BoringGame
                    //     buildingSprite.Position = new Vector2f(closestAxle.GetX(), closestAxle.GetY() + Structure.structureSize);
 
                     //if mouse is clicked, place the actual structure
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    if (Program.mousePressed)
                     {
                         //TODO generalise this to work for all axle types properly, copy what was done for Cogs
-                        return PlaceAxle(closestAxle, map, closestSide);
+                        Axle newAxle = PlaceAxle(closestAxle, map, closestSide);
+                        bore.structures.Add(newAxle);
+                        return newAxle;
                     }
 
                 }
@@ -190,18 +201,17 @@ namespace BoringGame
             else
             {
                 Vector2i pos = bore.FindClosestSupportedSlot(mousePos);
-                Console.WriteLine(pos.ToString());
                 if (pos.X != -1)
                 {
                     //var line = new VertexArray(PrimitiveType.Lines, 2);
                     //line[0] = new Vertex(bore.IndextoCoords(new Vector2i(0,0)));
                     //line[1] = new Vertex(bore.IndextoCoords(pos));
-                    //Program.window.Draw(line);
+                    //Program.window.Draw(line);aaaaaaaaa
                                        
 
                     buildingSprite.Position = bore.IndextoCoords(pos);
 
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    if (Program.mousePressed)
                     {
                         GameObject newObject = PlaceBuilding(pos,bore);
                         if (buildingMode == StructureType.Motor) map.axles.Add((Axle)newObject);
@@ -304,7 +314,7 @@ namespace BoringGame
             buildingSprite.Color = new Color(255, 255, 255, 255);
             buildingSprite = null;
 
-            //map.carts.Add(newCart);
+            map.carts.Add(newCart);
             map.platforms.Add(newCart);
             //if(map.drivingCart == null)
             //    map.drivingCart = newCart;
@@ -353,19 +363,17 @@ namespace BoringGame
                 Structure newObject;
 
                 if (buildingMode == StructureType.Ladder)
-                {
-                    newObject = null;
-                    //newObject = new Ladder(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                {   
+                    newObject = new Ladder(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
                 }
-                else if(buildingMode == StructureType.Drill)
+                else if(buildingMode == StructureType.Drill) //TODO this is OLD drill, remove
                 {
                     newObject = null;
-                    //newObject = new Drill (platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    //newObject = new Drill (br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
                 }
                 else if(buildingMode == StructureType.Motor)
                 {
-                    newObject = null;
-                    //newObject = new Motor(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y, null, 3);
+                    newObject = new Motor(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y, null, 3);
                 }
                 else //buildingMode == regular structure
                 {

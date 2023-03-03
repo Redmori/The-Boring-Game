@@ -49,7 +49,7 @@ namespace BoringGame
             UpdateSprite();
         }
 
-        public void MoveX(float dX)
+        public virtual void MoveX(float dX)
         {
             x += dX;
             UpdateSprite();

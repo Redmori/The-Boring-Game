@@ -13,6 +13,10 @@ namespace BoringGame
     class Program
     {
         public static bool debugFPS = true; //TEST fps counter
+        public static Text fpsText;
+        public static float totalTime = 0f;
+        public static int numFrames = 0;
+        public static float fps = 0f;
 
         public static ContextSettings context = new ContextSettings();
         public static RenderWindow window;
@@ -37,8 +41,8 @@ namespace BoringGame
         public static Map map;
         public static Bore bore;
         public static bool firstCart = true;
-        
 
+        public static bool mousePressed = false;
 
         static void Main(string[] args)
         {
@@ -87,6 +91,14 @@ namespace BoringGame
             UIText exampleUIText = new UIText(exampleText, new Vector2f(-windowWidth/2 + 10f, windowHeight/2 - 20f));
             uitexts.Add(exampleUIText);
 
+            //FPS text
+            fpsText = new Text(fps.ToString(), arial);
+            fpsText.Color = Color.Green;
+            fpsText.CharacterSize = 21;
+            fpsText.Origin = new Vector2f(0, fpsText.GetLocalBounds().Height);
+            UIText fpsUIText = new UIText(fpsText, new Vector2f(-windowWidth / 2 + 10f, -windowHeight / 2 + 20f));
+            uitexts.Add(fpsUIText);
+
 
             //initialize gameobjects
             gameObjects = new List<GameObject>();
@@ -103,11 +115,17 @@ namespace BoringGame
 
             while (window.IsOpen)
             {
+                mousePressed = false;
                 DateTime newTime = DateTime.Now;
                 float deltaTime = Math.Min(0.2f,(newTime.Ticks - currentTime.Ticks) / 10000000f);
                 currentTime = newTime;
-                if(debugFPS)
-                    Console.WriteLine(1f / deltaTime);
+                calcFPS(deltaTime);
+                //if (debugFPS)
+                //{
+                //    fps = (int)Math.Round(1f / deltaTime);
+                //    fpsText.DisplayedString = fps.ToString();
+                //    Console.WriteLine(1f / deltaTime);
+                //}
 
                 window.DispatchEvents();
                 window.Clear(new SFML.Graphics.Color(0, 128, 160));
@@ -290,6 +308,33 @@ namespace BoringGame
 
         }
 
+        public static void calcFPS(float dt)
+        {
+            if (!debugFPS)
+                return;
+            // Increment elapsed time and frame counter
+            totalTime += dt;
+            numFrames++;
+
+            // If delta time is very high, give a warning:
+            if (dt > 0.1f)
+                Console.WriteLine("Lagspike detection: Long frame detected, took " + Math.Round(dt*1000) + " miliseconds to render.");
+
+            // Check if one second has elapsed
+            if (totalTime >= 1f)
+            {
+                // Calculate FPS
+                fps = numFrames / totalTime;
+
+                // Reset frame counter and elapsed time
+                numFrames = 0;
+                totalTime = 0f;
+
+                // Print FPS to console (or display on screen)
+                //Console.WriteLine("FPS: " + fps);
+                fpsText.DisplayedString = Math.Round(fps).ToString();
+            }
+        }
 
         public static float GetMouseX()
         {
@@ -324,7 +369,7 @@ namespace BoringGame
 
         private static void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
         {
-
+            mousePressed = true;
         }
 
         static void window_KeyReleased(object sender, KeyEventArgs e)
@@ -340,7 +385,7 @@ namespace BoringGame
             }
             if (e.Code == Keyboard.Key.Space)
             {
-
+                bore.SetSpeed(bore.GetSpeed() * 2);
             }
         }
         private static void window_Resized(object sender, SizeEventArgs e)

@@ -15,8 +15,20 @@ namespace BoringGame
             platforms = new List<Platform>();
         }
 
+        public override void MoveX(float dx)
+        {
+
+            foreach (Platform platform in platforms)
+            {
+                platform.MoveX(dx);
+            }
+
+            base.MoveX(dx);
+        }
+
         public bool MoveCart(float dt, Map map)
         {
+            Console.WriteLine("is this running?");
             if (this.CollisionCheckRight(cartSpeed * dt, map) && dt != 0)
             {
                 MovePlatform(cartSpeed * dt);
@@ -44,7 +56,6 @@ namespace BoringGame
 
         public void MoveCartN(float dx, Map map)
         {
-
             MovePlatform(dx);
 
             foreach (Platform platform in platforms)
@@ -56,5 +67,7 @@ namespace BoringGame
 
             //TODO move all platforms ontop of this
         }
+
+
     }
 }

@@ -30,7 +30,7 @@ namespace BoringGame
             passable = true;
             minable = true;
 
-            SetHealth(10);
+            SetHealth(50);
         }
 
         public void SetType(Type newType)
@@ -49,7 +49,7 @@ namespace BoringGame
                 {
                     passable = false;
                     minable = true;
-                    break;
+                        break;
                 }
                 case Type.Hard:
                 {

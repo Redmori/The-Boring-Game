@@ -12,11 +12,10 @@ namespace BoringGame
         }
 
 
-        //public new void MoveX(float dx)
-        //{
-        //    previousDX = dx;
-        //    Console.WriteLine("moving");
-        //    base.MoveX(dx);
-        //}
+        public override void MoveX(float dx)
+        {
+            previousDX = dx;
+            base.MoveX(dx);
+        }
     }
 }

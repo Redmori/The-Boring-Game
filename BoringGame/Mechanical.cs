@@ -249,16 +249,16 @@ namespace BoringGame
 
             if (tile.minable)
             {
-                tile.Mine(drillPower, map);
+                tile.Mine(drillPower, map); //TODO: drilling power needs to be a function of dt
             }
 
             if (tile.minable && !tile.passable)
             {
-                return Math.Max(0f, tile.sprite.Position.X - GetX() - tile.RelativeHealth() * map.tileSize / 2 - 3 * this.GetSprite().Texture.Size.X / 4);
+                return Math.Max(0f, tile.sprite.Position.X - GetX() - tile.RelativeHealth() * map.tileSize/2 - this.GetSprite().Texture.Size.X / 2);
             }
 
             if (!tile.passable)
-                return Math.Max(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - 3 * this.GetSprite().Texture.Size.X / 4);
+                return Math.Max(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - this.GetSprite().Texture.Size.X / 2);
 
             return dx;
         }
