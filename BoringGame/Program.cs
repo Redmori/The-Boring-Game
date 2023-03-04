@@ -264,9 +264,10 @@ namespace BoringGame
             {
                 text.UpdatePosition(view.Center);
                 text.text.Draw(window, RenderStates.Default);
-                window.Draw(text.text, RenderStates.Default);
-                window.Draw(text.text);
+                //window.Draw(text.text, RenderStates.Default);
+                //window.Draw(text.text);
             }
+            player.inventory.DrawInventory(window, view);
 
             //TODO: implement world space texts, and timer texts etc
 

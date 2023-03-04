@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Security;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
+using Text = SFML.Graphics.Text;
 
 namespace BoringGame
 {
@@ -16,6 +18,8 @@ namespace BoringGame
         public Sprite buildingSprite;
 
         public StructureType[] contents;
+
+        Font arial = new Font("../../../Content/ArialCEMTBlack.ttf");
 
         public Inventory()
         {
@@ -244,7 +248,9 @@ namespace BoringGame
 
         public void StartBuilding(int hotkey)
         {
-            buildingMode = contents[hotkey-1];
+            if (items[hotkey-1] == null) return;
+            buildingMode = Build.InfoStructureType(items[hotkey-1].id);
+            //buildingMode = contents[hotkey-1];    //OLD
             buildingSprite = SpriteManager.GetStructureSprite(buildingMode);
             buildingSprite.Color = new Color(0, 255, 0, 128);
             building = true;
@@ -368,8 +374,30 @@ namespace BoringGame
                 buildingSprite.Draw(window, RenderStates.Default);
             }
         }
+
+
+        public void DrawInventory(RenderWindow window, View view) //TODO this can probably be improved to not make a new text every frame
+        {
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (items[i] == null)
+                    break;
+                Text newtext = new Text($"{i+1} - {items[i].toString()}", arial,19);
+                newtext.Color = Color.Red;
+                UIText text = new UIText(newtext, new Vector2f(-Program.windowWidth/2, i * 20f)) ;
+
+                text.UpdatePosition(view.Center);
+
+                text.text.Draw(window, RenderStates.Default);
+            }
+        }
     }
 
 
+        public string toString()
+        {
+            return $"{amount}x {Build.InfoName(id)} ";
+        }
+    }
     
 }
