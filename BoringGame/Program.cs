@@ -272,7 +272,7 @@ namespace BoringGame
             //TODO: implement world space texts, and timer texts etc
 
             //Draw building indicator
-            player.inventory.DrawBuildingSprite(window);
+            Build.DrawBuildingSprite(window);
 
 
             //Draw the cursor
@@ -327,7 +327,7 @@ namespace BoringGame
         {
             if (e.Code == Keyboard.Key.Escape)
             {
-                if(!player.inventory.building)
+                if(!Build.building)
                         window.Close();
             }
             if (e.Code == Keyboard.Key.Space)
