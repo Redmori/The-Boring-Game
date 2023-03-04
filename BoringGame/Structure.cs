@@ -16,6 +16,7 @@ namespace BoringGame
         Motor,
         Drillhead,
         Cog,
+        Structure,
 
         Count
     }
@@ -26,7 +27,7 @@ namespace BoringGame
 
         public float weight;
 
-        public Structure(float x, float y) : base(x, y)
+        public Structure(float x, float y, int id) : base(x, y)
         {
             weight = 1000;
         }

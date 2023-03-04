@@ -8,7 +8,7 @@ namespace BoringGame
     {
         public float drillPower;
 
-        public Drill(float x, float y) : base(x, y)
+        public Drill(float x, float y, int id) : base(x, y, id)
         {
             drillPower = 0.1f;
         }

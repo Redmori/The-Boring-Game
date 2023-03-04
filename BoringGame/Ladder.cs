@@ -7,7 +7,7 @@ namespace BoringGame
     public class Ladder : Structure
     {
         public float previousDX;
-        public Ladder(float x, float y) : base(x,y)
+        public Ladder(float x, float y, int id) : base(x,y,id)
         {
         }
 

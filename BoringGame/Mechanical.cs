@@ -18,6 +18,7 @@ namespace BoringGame
     {
         public float torque;
 
+
         public Axle Top = null;    //0
         public Axle Bottom = null; //1
         public Axle Right = null;  //2
@@ -28,12 +29,12 @@ namespace BoringGame
         public bool leftOpen = false;
         public bool rightOpen = false;
 
-        public Axle(float x, float y) : base(x, y)
+        public Axle(float x, float y) : base(x, y, 0) //TEMP id = 0
         {
             //Incase its not a default axle we do not want to set default axle behaviour
         }
 
-        public Axle(float x, float y, Axle connectingAxle, int side) : base(x, y)
+        public Axle(float x, float y, Axle connectingAxle, int side) : base(x, y, 0) //TEMP id = 0
         {
             switch (side)
             {
@@ -235,15 +236,15 @@ namespace BoringGame
     public class Drillhead : AxledMachine
     {
         public float hardness;
-        public float drillPower;
+        public static float drillPower = 0.1f;
         public Drillhead(float x, float y, Axle connectingAxle, int connectingSide) : base(x, y, connectingAxle, connectingSide)
         {
-            drillPower = 0.1f;
+            //drillPower = 0.1f;
         }        
         public override float CollisionCheckRightN(float dx, Map map)
         {
 
-            Tile tile = map.TileAtCoords(GetX() + dx + 3 * this.GetSprite().Texture.Size.X / 4, GetY());
+            Tile tile = map.TileAtCoords(GetX() + dx + this.GetSprite().Texture.Size.X / 2, GetY());
             if (tile == null)
                 return 0;
 

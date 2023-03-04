@@ -16,7 +16,7 @@ namespace BoringGame
 
         //public Structure[] structures;
 
-        public Platform(float x, float y, float half_width) : base(x, y)
+        public Platform(float x, float y, float half_width) : base(x, y, 0) //TEMP id = 0
         {
             halfWidth = half_width;
             relativePlatformHeight = 25;

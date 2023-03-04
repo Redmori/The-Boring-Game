@@ -16,6 +16,7 @@ namespace BoringGame
         public Sprite buildingSprite;
 
         public StructureType[] contents;
+        public Item[] items;
 
         public Inventory()
         {
@@ -29,6 +30,14 @@ namespace BoringGame
             contents[6] = StructureType.Motor;
             contents[7] = StructureType.Drillhead;
             contents[8] = StructureType.Cog;
+
+            items = new Item[20];
+            items[0] = new Item(200, 5);
+            items[1] = new Item(210, 10);
+            items[2] = new Item(220, 3);
+            items[3] = new Item(100, 5);
+
+
         }
 
         public GameObject CheckBuilding(Vector2f mousePos, Map map, Bore bore)
@@ -362,9 +371,10 @@ namespace BoringGame
             {
                 Structure newObject;
 
-                if (buildingMode == StructureType.Ladder)
-                {   
-                    newObject = new Ladder(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
+                if (buildingMode == StructureType.Ladder) 
+                {
+                    newObject = Build.CreateStructure(indexLoc, br, 220);
+                    //newObject = new Ladder(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
                 }
                 else if(buildingMode == StructureType.Drill) //TODO this is OLD drill, remove
                 {
@@ -377,8 +387,8 @@ namespace BoringGame
                 }
                 else //buildingMode == regular structure
                 {
-                    //newObject = new Structure(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
-                    newObject = new Structure(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
+                    //newObject = new Structure(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
+                    newObject = Build.CreateStructure(indexLoc, br, 100);
                 }
 
                 br.AddStructure(newObject,indexLoc.X,indexLoc.Y);
@@ -408,6 +418,21 @@ namespace BoringGame
         }
     }
 
+    public class Item
+    {
+        public int amount;
+        public int id;
 
+        public Item(int id, int amount)
+        {
+            this.amount = amount;
+            this.id = id;
+        }
+
+        public string toString()
+        {
+            return $"{amount}x {Build.infoName(id)} ";
+        }
+    }
     
 }

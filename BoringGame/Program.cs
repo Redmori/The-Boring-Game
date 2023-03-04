@@ -385,7 +385,11 @@ namespace BoringGame
             }
             if (e.Code == Keyboard.Key.Space)
             {
-                bore.SetSpeed(bore.GetSpeed() * 2);
+                bore.SetSpeed(bore.GetSpeed() * 2); // TEST parameter increase speeeeed
+            }
+            if (e.Code == Keyboard.Key.P)
+            {
+                Drillhead.drillPower *= 2; // TEST parameter increase drillpower
             }
         }
         private static void window_Resized(object sender, SizeEventArgs e)
