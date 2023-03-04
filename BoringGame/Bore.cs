@@ -112,6 +112,13 @@ namespace BoringGame
             return new Vector2i(ipos, jpos);
         }
 
+        public Vector2f IndextoCoords(Vector2i index)
+        {
+            float x = position - index.X*Structure.structureSize;
+            float y = 30 - index.Y*Structure.structureSize - 1;
+            return new Vector2f(x, y);
+        }
+
 
         public Structure StructureAtIndex(Vector2i index)
         {

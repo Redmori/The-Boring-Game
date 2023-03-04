@@ -3,6 +3,7 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Net.Security;
 using System.Text;
@@ -18,6 +19,7 @@ namespace BoringGame
         public Sprite buildingSprite;
 
         public StructureType[] contents;
+        public Item[] items;
 
         Font arial = new Font("../../../Content/ArialCEMTBlack.ttf");
 
@@ -33,6 +35,15 @@ namespace BoringGame
             contents[6] = StructureType.Motor;
             contents[7] = StructureType.Drillhead;
             contents[8] = StructureType.Cog;
+
+            items = new Item[20];
+            items[0] = new Item(200, 10);
+            items[1] = new Item(210, 10);
+            items[2] = new Item(220, 5);
+            items[3] = new Item(100, 5);
+
+
+
         }
 
         public GameObject CheckBuilding(Vector2f mousePos, Map map)
@@ -393,11 +404,19 @@ namespace BoringGame
         }
     }
 
+    public class Item
+    {
+        public int id;
+        public int amount;
 
+        public Item(int id, int amount)
+        {
+            this.id = id;
+            this.amount = amount;
+        }
         public string toString()
         {
             return $"{amount}x {Build.InfoName(id)} ";
         }
-    }
-    
+    }    
 }
