@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.System;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -17,6 +18,7 @@ namespace BoringGame
         Motor,
         Drillhead,
         Cog,
+        Structure,
 
         Count
     }
@@ -27,7 +29,7 @@ namespace BoringGame
 
         public float weight;
 
-        public Structure(float x, float y) : base(x, y)
+        public Structure(float x, float y, int id) : base(x, y)
         {
             weight = 1000;
         }
@@ -44,42 +46,57 @@ namespace BoringGame
         {
             //WARNING CHECK DRILL COLLISION WHEN CHANGING THIS WARNING
 
-            Tile tile = map.TileAtCoords(GetX() + dx + this.GetSprite().Texture.Size.X / 2, GetY());
+            //Tile tile = map.TileAtCoords(GetX() + dx + this.GetSprite().Texture.Size.X / 2, GetY());
+            //if (tile == null)
+            //    return 0;
+
+            //if (!tile.passable)
+            //    return Math.Max(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - this.GetSprite().Texture.Size.X / 2);
+
+            //return dx;
+
+            float rightX = GetSprite().GetGlobalBounds().Left + GetSprite().GetGlobalBounds().Width;
+
+            Tile tile = map.TileAtCoords(rightX + dx , GetY());
             if (tile == null)
                 return 0;
 
             if (!tile.passable)
-                return Math.Max(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - this.GetSprite().Texture.Size.X / 2);
+                return Math.Max(0f, tile.sprite.Position.X - map.tileSize / 2 - rightX);
 
             return dx;
         }
 
-        public static GameObject Place(Platform platform, int slot)
+        public static GameObject Place(Vector2i indexLoc, Bore br)
         {
             Build.building = false;
 
-            if (platform.structures[slot] == null)
+            if (indexLoc.X != -1)
             {
                 Structure newObject;
 
                 if (Build.buildingMode == StructureType.Ladder)
                 {
-                    newObject = new Ladder(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    newObject = Build.CreateStructure(indexLoc, br, 220);
+                    //newObject = new Ladder(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
                 }
-                else if (Build.buildingMode == StructureType.Drill)
+                else if (Build.buildingMode == StructureType.Drill) //TODO this is OLD drill, remove
                 {
-                    newObject = new Drill(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    newObject = null;
+                    //newObject = new Drill (br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
                 }
                 else if (Build.buildingMode == StructureType.Motor)
                 {
-                    newObject = new Motor(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y, null, 3);
+                    newObject = new Motor(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y, null, 3);
                 }
                 else //buildingMode == regular structure
                 {
-                    newObject = new Structure(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    //newObject = new Structure(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
+                    newObject = Build.CreateStructure(indexLoc, br, 100);
                 }
 
-                platform.BuildStructure(newObject, slot);
+                br.AddStructure(newObject, indexLoc.X, indexLoc.Y);
+                //platform.BuildStructure(newObject, slot);
                 newObject.SetSprite(Build.buildingSprite);
                 Build.buildingSprite.Color = new Color(255, 255, 255, 255);
                 Build.buildingSprite = null;
@@ -92,6 +109,7 @@ namespace BoringGame
                 SoundManager.PlayErrorSound();
                 return null;
             }
+
 
         }
     }

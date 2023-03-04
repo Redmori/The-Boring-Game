@@ -236,7 +236,7 @@ namespace BoringGame
             {
                 foreach (Platform platform in map.platforms)
                 {
-                    if (GetY() + halfSizeY < platform.GetPlatformY() && GetY() + halfSizeY + dy > platform.GetPlatformY() && GetX() + halfSizeX > platform.GetX() - platform.halfWidth && GetX() - halfSizeX < platform.GetX() + platform.halfWidth)
+                    if (GetY() + halfSizeY < platform.GetPlatformY() && GetY() + halfSizeY + dy > platform.GetPlatformY() && GetX() + halfSizeX > platform.GetX() - platform.halfWidth*1.5f && GetX() - halfSizeX < platform.GetX() + platform.halfWidth/2)
                     {
                         dy = Math.Min(dy, platform.GetPlatformY() - GetY() - halfSizeY - 0.001f);
                         //this.SetX(GetX() + platform.previousDX); //TODO collision with player and wall

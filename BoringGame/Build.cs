@@ -29,7 +29,7 @@ namespace BoringGame
 
         public static Structure CreateStructure(Vector2i indexLoc, Bore br, int id)
         {
-            var args = new object[] { br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y, id};
+            var args = new object[] { br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y, id };
             var structure = Activator.CreateInstance((System.Type)info[id][0], args) as Structure;
 
             Console.WriteLine($"Created {structure.GetType().Name} with id: {id}");
@@ -46,35 +46,47 @@ namespace BoringGame
 
 
 
-        public static GameObject UpdateBuilding(Vector2f mousePos, Map map)
+        public static GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore)
         {
+            Console.WriteLine("test1 " + buildingMode.ToString());
             if (buildingMode == StructureType.Cart)
             {
 
-                if (map.drivingCart != null)
+                if (bore != null)
                 {
-                    float totalWidth = 0;
-                    foreach (Cart cart in map.carts)
-                    {
-                        totalWidth += cart.halfWidth * 2;
-                    }
-                    totalWidth = totalWidth - map.drivingCart.halfWidth + map.tileSize; //TODO map.tileSize = halfwidth of the placing cart
-                    buildingSprite.Position = new Vector2f(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y);
+                    //float totalWidth = 0;
+                    //foreach (Cart cart in map.carts)
+                    //{
+                    //    totalWidth += cart.halfWidth * 2;
+                    //}
+                    //totalWidth = totalWidth - map.drivingCart.halfWidth + map.tileSize; //TODO map.tileSize = halfwidth of the placing cart
+                    //buildingSprite.Position = new Vector2f(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y);
 
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
-                        return PlaceCart(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y, map);
+                    Vector2f backpos = bore.IndextoCoords(new Vector2i(bore.GetSize().X, 0));
+
+                    buildingSprite.Position = backpos;
+
+                    if (Program.mousePressed)
+                        return PlaceCart(backpos.X, backpos.Y, map);
+                    //    return PlaceCart(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y, map);
                 }
                 else
                 {
                     buildingSprite.Position = new Vector2f(mousePos.X, map.tiles[0][map.height - 2].sprite.Position.Y);
 
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    if (Program.mousePressed)
                         return PlaceCart(mousePos.X, map.tiles[0][map.height - 2].sprite.Position.Y, map);
                 }
-
+                return null;
 
             }
-            else if (buildingMode == StructureType.Platform)
+            if (bore == null)
+            {
+                building = false;
+                return null;
+            }
+
+            if (buildingMode == StructureType.Platform)
             {
                 //loop over all carts to see which one is closest x wise and place it on top of there
                 Cart closestCart = null;
@@ -92,39 +104,42 @@ namespace BoringGame
                     float platformY = closestCart.GetY() - (closestCart.platforms.Count + 1) * (2f * map.tileSize);
                     buildingSprite.Position = new Vector2f(closestCart.GetX(), platformY);
 
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    if (Program.mousePressed)
+                    {
+                        bore.AddPlatform(closestCart);
                         return PlacePlatform(closestCart.GetX(), platformY, closestCart, map);
+                    }
                 }
-
-
             }
 
             else if (buildingMode == StructureType.Axle || buildingMode == StructureType.Drillhead || buildingMode == StructureType.Cog)
             {
                 Axle closestAxle = null;
-                float closestDist = float.MaxValue;
+                float closestD = float.MaxValue;
                 OrthSlot closestSide = OrthSlot.Top;
                 foreach (Axle nearAxle in map.axles)
                 {
                     (OrthSlot slot, float dist) = nearAxle.FindClosestOpenSlot(mousePos);
-                    if (dist < closestDist)
+                    if (dist < closestD)
                     {
-                        closestDist = dist;
+                        closestD = dist;
                         closestAxle = nearAxle;
                         closestSide = slot;
                     }
                 }
-                if (closestAxle != null && closestDist != float.MaxValue)
+                if (closestAxle != null && closestD != float.MaxValue)
                 {
                     buildingSprite.Position = closestAxle.GetNeighbourCoordinates(closestSide);
                     // if (buildingMode == StructureType.Cog && closestAxle is Cog)
                     //     buildingSprite.Position = new Vector2f(closestAxle.GetX(), closestAxle.GetY() + Structure.structureSize);
 
                     //if mouse is clicked, place the actual structure
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                    if (Program.mousePressed)
                     {
                         //TODO generalise this to work for all axle types properly, copy what was done for Cogs
-                        return PlaceAxle(closestAxle, map, closestSide);
+                        Axle newAxle = PlaceAxle(closestAxle, map, closestSide);
+                        bore.structures.Add(newAxle);
+                        return newAxle;
                     }
 
                 }
@@ -134,36 +149,27 @@ namespace BoringGame
 
             else
             {
-                Platform closestPlatform = null;
-                int closestSlot = 0;
-                float closestDist = float.MaxValue;
-                foreach (Platform platform in map.platforms)
-                {
-                    for (int i = 0; i < platform.slots; i++)
-                    {
-                        Vector2f slotPos = platform.GetSlotPosition(i);
-                        float dist = (slotPos.X - mousePos.X) * (slotPos.X - mousePos.X) + (slotPos.Y - mousePos.Y) * (slotPos.Y - mousePos.Y);
-                        if (dist < closestDist)
-                        {
-                            closestPlatform = platform;
-                            closestDist = dist;
-                            closestSlot = i;
-                        }
-                    }
-                }
-                if (closestPlatform != null)
-                {
-                    buildingSprite.Position = closestPlatform.GetSlotPosition(closestSlot);
 
-                    //if mouse is clicked, place the actual structure
-                    if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                Console.WriteLine("test");
+                Vector2i pos = bore.FindClosestSupportedSlot(mousePos);
+                if (pos.X != -1)
+                {
+                    //var line = new VertexArray(PrimitiveType.Lines, 2);
+                    //line[0] = new Vertex(bore.IndextoCoords(new Vector2i(0,0)));
+                    //line[1] = new Vertex(bore.IndextoCoords(pos));
+                    //Program.window.Draw(line);aaaaaaaaa
+
+
+                    buildingSprite.Position = bore.IndextoCoords(pos);
+
+                    if (Program.mousePressed)
                     {
-                        GameObject newObject = PlaceBuilding(closestPlatform, closestSlot);
+                        GameObject newObject = PlaceBuilding(pos, bore);
                         if (buildingMode == StructureType.Motor) map.axles.Add((Axle)newObject);
                         return newObject;
                     }
                 }
-            }
+            }           
             return null;
         }
 
@@ -229,33 +235,36 @@ namespace BoringGame
 
             return newAxle;
         }
-
-        public static GameObject PlaceBuilding(Platform platform, int slot)
+        public static GameObject PlaceBuilding(Vector2i indexLoc, Bore br)
         {
             building = false;
 
-            if (platform.structures[slot] == null)
+            if (indexLoc.X != -1)
             {
                 Structure newObject;
 
                 if (buildingMode == StructureType.Ladder)
                 {
-                    newObject = new Ladder(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    newObject = Build.CreateStructure(indexLoc, br, 220);
+                    //newObject = new Ladder(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
                 }
-                else if (buildingMode == StructureType.Drill)
+                else if (buildingMode == StructureType.Drill) //TODO this is OLD drill, remove
                 {
-                    newObject = new Drill(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    newObject = null;
+                    //newObject = new Drill (br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
                 }
                 else if (buildingMode == StructureType.Motor)
                 {
-                    newObject = new Motor(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y, null, 3);
+                    newObject = new Motor(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y, null, 3);
                 }
                 else //buildingMode == regular structure
                 {
-                    newObject = new Structure(platform.GetSlotPosition(slot).X, platform.GetSlotPosition(slot).Y);
+                    //newObject = new Structure(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
+                    newObject = Build.CreateStructure(indexLoc, br, 100);
                 }
 
-                platform.BuildStructure(newObject, slot);
+                br.AddStructure(newObject, indexLoc.X, indexLoc.Y);
+                //platform.BuildStructure(newObject, slot);
                 newObject.SetSprite(buildingSprite);
                 buildingSprite.Color = new Color(255, 255, 255, 255);
                 buildingSprite = null;
@@ -271,6 +280,7 @@ namespace BoringGame
 
 
         }
+
         public static void DrawBuildingSprite(RenderWindow window)
         {
             if (buildingSprite != null)

@@ -42,7 +42,7 @@ namespace BoringGame
 
         }
 
-        public GameObject CheckBuilding(Vector2f mousePos, Map map)
+        public GameObject CheckBuilding(Vector2f mousePos, Map map, Bore bore)
         {
            
             if(!Build.building && HotKeyPressed() != -1)
@@ -62,10 +62,11 @@ namespace BoringGame
 
             if (Build.building && Build.buildingSprite != null) //place building indicator on the closest slot of a platform
             {
-                return Build.UpdateBuilding(mousePos, map);                                
+                return Build.UpdateBuilding(mousePos, map, bore);                                
             }
             return null;
         }
+
 
 
         public int HotKeyPressed()
@@ -119,7 +120,7 @@ namespace BoringGame
             {
                 if (items[i] == null)
                     break;
-                Text newtext = new Text($"{i+1} - {items[i].ToString()}", arial,19);
+                Text newtext = new Text($"{i+1} - {items[i].toString()}", arial,19);
                 newtext.Color = Color.Red;
                 UIText text = new UIText(newtext, new Vector2f(-Program.windowWidth/2, i * 20f)) ;
 
@@ -132,17 +133,19 @@ namespace BoringGame
 
     public class Item
     {
-        public int id;
         public int amount;
+        public int id;
 
         public Item(int id, int amount)
         {
-            this.id = id;
             this.amount = amount;
+            this.id = id;
         }
-        public string ToString()
+
+        public string toString()
         {
             return $"{amount}x {Build.InfoName(id)} ";
         }
-    }    
+    }
+    
 }

@@ -7,16 +7,15 @@ namespace BoringGame
     public class Ladder : Structure
     {
         public float previousDX;
-        public Ladder(float x, float y) : base(x,y)
+        public Ladder(float x, float y, int id) : base(x,y,id)
         {
         }
 
 
-        //public new void MoveX(float dx)
-        //{
-        //    previousDX = dx;
-        //    Console.WriteLine("moving");
-        //    base.MoveX(dx);
-        //}
+        public override void MoveX(float dx)
+        {
+            previousDX = dx;
+            base.MoveX(dx);
+        }
     }
 }
