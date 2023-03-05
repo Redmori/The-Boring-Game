@@ -77,20 +77,8 @@ namespace BoringGame
 
                 if (Program.mousePressed)
                 {
-                    System.Type currentType = Build.InfoType(id);
-                    MethodInfo methodInfo = null;
-                    while (currentType != null)
-                    {
-                        Console.WriteLine($"cyle {currentType}");
-                        methodInfo = currentType.GetMethod("Place", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
-                        if (methodInfo != null)
-                        {
-                            break;
-                        }
-                        currentType = currentType.BaseType;
-                    }
                     var args = new object[] { pos, bore, id };
-                    GameObject newObject = (GameObject)methodInfo.Invoke(null, args); //this runs Structure.Place(x,y,id) or one of its derived classes methods
+                    GameObject newObject = (GameObject)Build.GetMethodInfo(id, "Place").Invoke(null, args); //this runs Structure.Place(x,y,id) or one of its derived classes methods
                                                                                       //GameObject newObject = type.Place(pos, bore, buildingId);
                     //if (buildingMode == StructureType.Motor) map.axles.Add((Axle)newObject);
                     return newObject;

@@ -35,37 +35,35 @@ namespace BoringGame
             //Incase its not a default axle we do not want to set default axle behaviour
         }
 
-        public Axle(float x, float y, Axle connectingAxle, int side) : base(x, y, 0) //TEMP id = 0
+        public Axle(float x, float y, Axle connectingAxle, OrthSlot side) : base(x, y, 0) //TEMP id = 0
         {
             switch (side)
             {
-                case 0:
-                    Top = connectingAxle;
-                    bottomOpen = true;
-                    break;
-                case 1:
-                    Bottom = connectingAxle;
-                    topOpen = true;
-                    break;
-                case 2:
+                case OrthSlot.Right:
                     Left = connectingAxle;
                     rightOpen = true;
+                    connectingAxle.Right = this;
+                    connectingAxle.rightOpen = false;
+                    this.SetX(GetX() + Structure.structureSize);
                     break;
-                case 3:
+                case OrthSlot.Left:
                     Right = connectingAxle;
                     leftOpen = true;
+                    connectingAxle.Left = this;
+                    connectingAxle.leftOpen = false;
+                    this.SetX(GetX() - Structure.structureSize);
                     break;
             }
 
             torque = connectingAxle.torque;
         }
 
-        public (OrthSlot, float) FindClosestOpenSlot(Vector2f mousePos)
+        public (OrthSlot, float) FindClosestOpenSlot(Vector2f mousePos, bool[] angles)
         {
             OrthSlot closestSlot = OrthSlot.Top;
             float closestDist = float.MaxValue;
 
-            if (topOpen) {
+            if (topOpen && angles[0]) {
                 float dist = (GetX() - mousePos.X) *(GetX() - mousePos.X) + (GetY() - mousePos.Y - Structure.structureSize) * (GetY() - mousePos.Y - Structure.structureSize);
                 if (dist < closestDist)
                 {
@@ -73,7 +71,7 @@ namespace BoringGame
                     closestSlot = OrthSlot.Top;
                 }
             }
-            if (bottomOpen)
+            if (bottomOpen && angles[1])
             {
                 float dist = (GetX() - mousePos.X) * (GetX() - mousePos.X) + (GetY() - mousePos.Y + Structure.structureSize) * (GetY() - mousePos.Y + Structure.structureSize);
                 if (dist < closestDist)
@@ -82,7 +80,7 @@ namespace BoringGame
                     closestSlot = OrthSlot.Bottom;
                 }
             }
-            if (rightOpen)
+            if (rightOpen && angles[2])
             {
                 float dist = (GetX() - mousePos.X + Structure.structureSize) * (GetX() - mousePos.X + Structure.structureSize) + (GetY() - mousePos.Y) * (GetY() - mousePos.Y);
                 if (dist < closestDist)
@@ -91,7 +89,7 @@ namespace BoringGame
                     closestSlot = OrthSlot.Right;
                 }
             }
-            if (leftOpen)
+            if (leftOpen && angles[3])
             {
                 float dist = (GetX() - mousePos.X - Structure.structureSize) * (GetX() - mousePos.X - Structure.structureSize) + (GetY() - mousePos.Y) * (GetY() - mousePos.Y);
                 if (dist < closestDist)
@@ -131,14 +129,21 @@ namespace BoringGame
             return new Vector2f(GetX(),GetY());
         }
 
+        public static bool[] GetConnection()
+        {
+            return new bool[] { false, false, true, true };
+        }
+
         public static new GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore, int id)
         {
+            bool[] angles = (bool[])Build.GetMethodInfo(id, "GetConnection").Invoke(null, new object[] { });
+
             Axle closestAxle = null;
             float closestD = float.MaxValue;
             OrthSlot closestSide = OrthSlot.Top;
             foreach (Axle nearAxle in map.axles)
             {
-                (OrthSlot slot, float dist) = nearAxle.FindClosestOpenSlot(mousePos);
+                (OrthSlot slot, float dist) = nearAxle.FindClosestOpenSlot(mousePos,angles);
                 if (dist < closestD)
                 {
                     closestD = dist;
@@ -156,7 +161,8 @@ namespace BoringGame
                 if (Program.mousePressed)
                 {
                     //TODO generalise this to work for all axle types properly, copy what was done for Cogs
-                    Axle newAxle = Axle.Place(closestAxle, map, closestSide);
+                    var args = new Object[] { closestAxle, map, closestSide };
+                    Axle newAxle = (Axle)Build.GetMethodInfo(id,"Place").Invoke(null,args);
                     bore.structures.Add(newAxle);
                     return newAxle;
                 }
@@ -170,33 +176,13 @@ namespace BoringGame
         public static new Axle Place(Axle connectingAxle, Map map, OrthSlot side)
         {
             Build.building = false;
-            Axle newAxle;
-            if (Build.buildingMode == StructureType.Drillhead)
-                newAxle = new Drillhead(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2);
-            else if (Build.buildingMode == StructureType.Cog)
-            {
-                if (connectingAxle is Cog)
-                    newAxle = new Cog(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);   //TEMP TODO open side = TOP & RIGHT hardcoded
-                else
-                    newAxle = new Cog(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);   //TEMP TODO open side = TOP & RIGHT hardcoded
-            }
+            Axle newAxle = new Axle(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);
 
-            else
-                newAxle = new Axle(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2); //TEMP TODO side = 2 is only right side hard coded for now
             newAxle.torque = connectingAxle.torque;
 
             SpriteManager.Build(newAxle);
-            //newAxle.SetSprite(Build.buildingSprite); //OLD
-            //Build.buildingSprite.Color = new Color(255, 255, 255, 255);
-            //Build.buildingSprite = null;
 
             map.axles.Add(newAxle);
-            if (!(Build.buildingMode == StructureType.Cog && connectingAxle is Cog))
-            {
-                Console.WriteLine("Right closed");
-                connectingAxle.Right = newAxle;
-                connectingAxle.rightOpen = false;
-            }
 
             return newAxle;
         }
@@ -216,7 +202,7 @@ namespace BoringGame
                         Bottom = connectingAxle;
                         connectingAxle.Top = this;
                         connectingAxle.topOpen = false;
-                        this.SetY(GetY() - structureSize);
+                        this.SetY(GetY() - Structure.structureSize);
                         break;
                     }
                  case OrthSlot.Bottom:
@@ -227,7 +213,7 @@ namespace BoringGame
                         Top = connectingAxle;
                         connectingAxle.Bottom = this;
                         connectingAxle.bottomOpen = false;
-                        this.SetY(GetY() + structureSize);
+                        this.SetY(GetY() + Structure.structureSize);
                         break;
                     }
                     case OrthSlot.Right:
@@ -238,7 +224,7 @@ namespace BoringGame
                         Left = connectingAxle;
                         connectingAxle.Right = this;
                         connectingAxle.rightOpen = false;
-                        this.SetX(GetX() + structureSize);
+                        this.SetX(GetX() + Structure.structureSize);
                         break;
                     }
                     case OrthSlot.Left:
@@ -249,10 +235,12 @@ namespace BoringGame
                         Right = connectingAxle;
                         connectingAxle.Left = this;
                         connectingAxle.leftOpen = false;
-                        this.SetX(GetX() - structureSize);
+                        this.SetX(GetX() - Structure.structureSize);
                         break;
                     }
             }
+
+
 
             //if(connectingAxle is Cog) //if its a cog we are connecting to
             //{
@@ -270,6 +258,33 @@ namespace BoringGame
             //    connectingAxle.Right = this;
             //    connectingAxle.rightOpen = false;
             //}
+        }
+
+        public static new Axle Place(Axle connectingAxle, Map map, OrthSlot side)
+        {
+            Build.building = false;
+            Axle newAxle;
+            
+            newAxle = new Cog(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);
+
+            newAxle.torque = connectingAxle.torque;
+
+            SpriteManager.Build(newAxle);
+
+            map.axles.Add(newAxle);
+
+            //if (!(connectingAxle is Cog))
+            //{
+            //    connectingAxle.Right = newAxle;
+            //    connectingAxle.rightOpen = false;
+            //}
+
+            return newAxle;
+        }
+
+        public static new bool[] GetConnection()
+        {
+            return new bool[] { true, true, true, true };
         }
     }
 
@@ -305,6 +320,11 @@ namespace BoringGame
     public class AxledMachine : Axle
     {
         public float torqueConsumed;
+
+        public AxledMachine(float x, float y) : base(x, y)
+        {
+        }
+
         public AxledMachine(float x, float y, Axle connectingAxle, int connectingSide) : base(x, y)
         {
             switch (connectingSide)
@@ -321,9 +341,14 @@ namespace BoringGame
     {
         public float hardness;
         public static float drillPower = 0.1f;
-        public Drillhead(float x, float y, Axle connectingAxle, int connectingSide) : base(x, y, connectingAxle, connectingSide)
+        public Drillhead(float x, float y, Axle connectingAxle, OrthSlot side) : base(x, y)
         {
             //drillPower = 0.1f;
+
+            Left = connectingAxle;
+            connectingAxle.Right = this;
+            connectingAxle.rightOpen = false;
+            this.SetX(GetX() + Structure.structureSize);
         }        
         public override float CollisionCheckRightN(float dx, Map map)
         {
@@ -346,6 +371,25 @@ namespace BoringGame
                 return Math.Max(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - this.GetSprite().Texture.Size.X / 2);
 
             return dx;
+        }
+        public static new Axle Place(Axle connectingAxle, Map map, OrthSlot side)
+        {
+            Build.building = false;
+            Axle newAxle;
+            newAxle = new Drillhead(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, OrthSlot.Right);
+
+            newAxle.torque = connectingAxle.torque;
+
+            SpriteManager.Build(newAxle);
+
+            map.axles.Add(newAxle);
+
+            return newAxle;
+        }
+
+        public static bool[] GetConnection()
+        {
+            return new bool[] { false, false, true, false };
         }
     }
 }

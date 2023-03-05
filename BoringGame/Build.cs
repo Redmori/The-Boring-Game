@@ -34,7 +34,7 @@ namespace BoringGame
         public static Structure CreateStructure(Vector2i indexLoc, Bore br, int id)
         {
             var args = new object[] { br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y, id };
-            var structure = Activator.CreateInstance((System.Type)info[id][0], args) as Structure;
+            var structure = Activator.CreateInstance((Type)info[id][0], args) as Structure;
 
             Console.WriteLine($"Created {structure.GetType().Name} with id: {id}");
 
@@ -57,6 +57,23 @@ namespace BoringGame
             }
         }
 
+        public static MethodInfo GetMethodInfo(int id, string method)
+        {
+            Type currentType = Build.InfoType(id);
+            MethodInfo methodInfo = null;
+            while (currentType != null)
+            {
+                methodInfo = currentType.GetMethod(method, BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                if (methodInfo != null)
+                {
+                    break;
+                }
+                currentType = currentType.BaseType;
+            }
+
+            return methodInfo;
+
+        }
         public static string InfoName(int id)
         {
             return (string)info[id][2];
@@ -67,9 +84,9 @@ namespace BoringGame
             return (StructureType)info[id][1];
         }
 
-        public static System.Type InfoType(int id)
+        public static Type InfoType(int id)
         {
-            return (System.Type)info[id][0];
+            return (Type)info[id][0];
         }
     }
 }

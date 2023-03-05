@@ -99,38 +99,38 @@ namespace BoringGame
             return structSprite;
         }
 
-        public static Sprite ChangeSprite(Type type, Sprite oldSprite)
+        public static Sprite ChangeSprite(TileType type, Sprite oldSprite)
         {
             return GetSprite(type, oldSprite.Position.X, oldSprite.Position.Y);
         }
-        public static Sprite GetSprite(Type type, float x, float y)
+        public static Sprite GetSprite(TileType type, float x, float y)
         {
             Sprite newSprite = GetSprite(type);
             newSprite.Origin = new Vector2f(25f, 25f);//new Vector2f(newSprite.Texture.Size.X / 2f, newSprite.Texture.Size.Y / 2f);
             newSprite.Position = new Vector2f(x,y);
             return newSprite;
         }
-        public static Sprite GetSprite(Type type)
+        public static Sprite GetSprite(TileType type)
         {
             Sprite tileSprite = null;
             switch (type)
             {
-                case Type.Empty:
+                case TileType.Empty:
                 {
                         tileSprite = new Sprite(empty_tex);
                         break;
                 }
-                case Type.Ground:
+                case TileType.Ground:
                 {
                         tileSprite = MakeTileSprite(test_tex);//new Sprite(ground_tex);
                         break;
                 }
-                case Type.Hard:
+                case TileType.Hard:
                 {
                     tileSprite = new Sprite(hard_tex);
                     break;
                 }
-                case Type.Rock:
+                case TileType.Rock:
                     {
                         tileSprite = new Sprite(rock_tex);
                         break;

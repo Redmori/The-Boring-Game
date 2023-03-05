@@ -6,7 +6,7 @@ using System.Text;
 
 namespace BoringGame
 {
-    public enum Type{
+    public enum TileType{
         Empty,
         Ground,
         Rock,
@@ -16,7 +16,7 @@ namespace BoringGame
     }
     public class Tile
     {
-        public Type type;
+        public TileType type;
         public Sprite sprite;
         public bool passable;
         public bool minable;
@@ -33,31 +33,31 @@ namespace BoringGame
             SetHealth(50);
         }
 
-        public void SetType(Type newType)
+        public void SetType(TileType newType)
         {
             type = newType;
             sprite = SpriteManager.ChangeSprite(newType, sprite);
             switch (newType)
             {
-                case Type.Empty:
+                case TileType.Empty:
                 {
                     passable = true;
                         minable = false;
                     break;
                 }
-                case Type.Ground:
+                case TileType.Ground:
                 {
                     passable = false;
                     minable = true;
                         break;
                 }
-                case Type.Hard:
+                case TileType.Hard:
                 {
                     passable = false;
                     minable = false;
                     break;
                 }
-                case Type.Rock:
+                case TileType.Rock:
                     {
                         passable = false;
                         minable = true;
@@ -78,7 +78,7 @@ namespace BoringGame
             if(health <= 0)
             {
                 int indexLoc = map.CoordsToIndex(this.sprite.Position.X, 0).X;
-                this.SetType(Type.Empty);
+                this.SetType(TileType.Empty);
                 if (indexLoc > map.width / 2)
                 {
                     map.AddColumn();

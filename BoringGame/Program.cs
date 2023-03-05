@@ -84,12 +84,12 @@ namespace BoringGame
             uitexts = new List<UIText>();
 
             Font arial = new Font("../../../Content/ArialCEMTBlack.ttf");
-            Text exampleText = new Text("| 1 Cart | 2 Ladder | 3 Platform | 4 Drill | 5 Furnace | 6 Axle | 7 Motor | 8 Drillhead | 9 Cog |", arial);
-            exampleText.Color = Color.Red;
-            exampleText.CharacterSize = 21;
-            exampleText.Origin = new Vector2f(0, exampleText.GetLocalBounds().Height);
-            UIText exampleUIText = new UIText(exampleText, new Vector2f(-windowWidth/2 + 10f, windowHeight/2 - 20f));
-            uitexts.Add(exampleUIText);
+            //Text exampleText = new Text("| 1 Cart | 2 Ladder | 3 Platform | 4 Drill | 5 Furnace | 6 Axle | 7 Motor | 8 Drillhead | 9 Cog |", arial);
+            //exampleText.Color = Color.Red;
+            //exampleText.CharacterSize = 21;
+            //exampleText.Origin = new Vector2f(0, exampleText.GetLocalBounds().Height);
+            //UIText exampleUIText = new UIText(exampleText, new Vector2f(-windowWidth/2 + 10f, windowHeight/2 - 20f));
+            //uitexts.Add(exampleUIText);
 
             //FPS text
             fpsText = new Text(fps.ToString(), arial);

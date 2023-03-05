@@ -64,9 +64,9 @@ namespace BoringGame
             return tiles[loc.X][loc.Y];
         }
 
-        public void CreateCluster(int x, int y, Type type)
+        public void CreateCluster(int x, int y, TileType type)
         {
-            if (y > 1 && y < height - 1 && x > 1 && x < width && tiles[x][y] != null && tiles[x][y].type == Type.Ground)
+            if (y > 1 && y < height - 1 && x > 1 && x < width && tiles[x][y] != null && tiles[x][y].type == TileType.Ground)
             {
                 tiles[x][y].SetType(type);
                 Random r = new Random();
@@ -90,22 +90,22 @@ namespace BoringGame
                 Sprite tileSprite;
                 if (j == 0 | j == height - 1)
                 {
-                    tileSprite = SpriteManager.GetSprite(Type.Hard, progress * tileSize + discoverDistance * tileSize, j * tileSize);
+                    tileSprite = SpriteManager.GetSprite(TileType.Hard, progress * tileSize + discoverDistance * tileSize, j * tileSize);
                     minable = false;
                 }
                 else
                 {
-                    tileSprite = SpriteManager.GetSprite(Type.Ground, progress * tileSize + discoverDistance * tileSize, j * tileSize);
+                    tileSprite = SpriteManager.GetSprite(TileType.Ground, progress * tileSize + discoverDistance * tileSize, j * tileSize);
                 }
                 Tile newTile = new Tile(tileSprite);
                 newTile.passable = false;
                 newTile.minable = minable;
-                newTile.type = Type.Ground;
+                newTile.type = TileType.Ground;
                 newColumn[j] = newTile;
             }
             tiles.Add(newColumn);
             tiles.RemoveAt(0);
-            ChangeColumn(Type.Hard, 0);
+            ChangeColumn(TileType.Hard, 0);
             progress++;
             Console.WriteLine("adding line: " + progress);
 
@@ -115,7 +115,7 @@ namespace BoringGame
             {
                 if (r.Next(0, 100) > 97)
                 {
-                    CreateCluster((int)width - 1, j, Type.Rock);
+                    CreateCluster((int)width - 1, j, TileType.Rock);
                     //TODO: clusters made on the map cant propogate to the right, make it so that these propogations are saved and created when another column is added
                 }
             }
@@ -130,21 +130,21 @@ namespace BoringGame
                 {
                     bool passable = true;
                     bool minable = true;
-                    Type type = Type.Empty;
+                    TileType type = TileType.Empty;
 
                     if (i == 0 || j == 0 || j == height - 1)
                     {
-                        type = Type.Hard;
+                        type = TileType.Hard;
                         passable = false;
                         minable = false;
                     }
                     else if (i <= progress && j > 20  && i > 25)
                     {
-                        type = Type.Empty;
+                        type = TileType.Empty;
                     }
                     else
                     {
-                        type = Type.Ground;
+                        type = TileType.Ground;
                         passable = false;
                     }
                     Tile newTile = new Tile(SpriteManager.GetSprite(type, i * tileSize, j * tileSize));
@@ -164,13 +164,13 @@ namespace BoringGame
                 {
                     if(r.Next(0,100) > 97)
                     {
-                        CreateCluster(i,j, Type.Rock);
+                        CreateCluster(i,j, TileType.Rock);
                     }
                 }
             }
         }
 
-        public void ChangeColumn(Type newType, int column)
+        public void ChangeColumn(TileType newType, int column)
         {
             for(int i = 0; i < height; i++)
             {
