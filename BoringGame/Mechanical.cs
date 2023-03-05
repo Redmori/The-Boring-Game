@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic;
+using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
@@ -128,6 +129,38 @@ namespace BoringGame
             }
 
             return new Vector2f(GetX(),GetY());
+        }
+
+        public static new Axle Place(Axle connectingAxle, Map map, OrthSlot side)
+        {
+            Build.building = false;
+            Axle newAxle;
+            if (Build.buildingMode == StructureType.Drillhead)
+                newAxle = new Drillhead(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2);
+            else if (Build.buildingMode == StructureType.Cog)
+            {
+                if (connectingAxle is Cog)
+                    newAxle = new Cog(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);   //TEMP TODO open side = TOP & RIGHT hardcoded
+                else
+                    newAxle = new Cog(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);   //TEMP TODO open side = TOP & RIGHT hardcoded
+            }
+
+            else
+                newAxle = new Axle(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2); //TEMP TODO side = 2 is only right side hard coded for now
+            newAxle.torque = connectingAxle.torque;
+            newAxle.SetSprite(Build.buildingSprite);
+            Build.buildingSprite.Color = new Color(255, 255, 255, 255);
+            Build.buildingSprite = null;
+
+            map.axles.Add(newAxle);
+            if (!(Build.buildingMode == StructureType.Cog && connectingAxle is Cog))
+            {
+                Console.WriteLine("Right closed");
+                connectingAxle.Right = newAxle;
+                connectingAxle.rightOpen = false;
+            }
+
+            return newAxle;
         }
     }
 

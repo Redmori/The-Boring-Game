@@ -3,6 +3,7 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Xml.Linq;
@@ -66,7 +67,7 @@ namespace BoringGame
                     buildingSprite.Position = backpos;
 
                     if (Program.mousePressed)
-                        return PlaceCart(backpos.X, backpos.Y, map);
+                        return Cart.Place(backpos.X, backpos.Y, map);
                     //    return PlaceCart(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y, map);
                 }
                 else
@@ -74,7 +75,7 @@ namespace BoringGame
                     buildingSprite.Position = new Vector2f(mousePos.X, map.tiles[0][map.height - 2].sprite.Position.Y);
 
                     if (Program.mousePressed)
-                        return PlaceCart(mousePos.X, map.tiles[0][map.height - 2].sprite.Position.Y, map);
+                        return Cart.Place(mousePos.X, map.tiles[0][map.height - 2].sprite.Position.Y, map);
                 }
                 return null;
 
@@ -106,7 +107,7 @@ namespace BoringGame
                     if (Program.mousePressed)
                     {
                         bore.AddPlatform(closestCart);
-                        return PlacePlatform(closestCart.GetX(), platformY, closestCart, map);
+                        return Platform.Place(closestCart.GetX(), platformY, closestCart, map);
                     }
                 }
             }
@@ -136,148 +137,33 @@ namespace BoringGame
                     if (Program.mousePressed)
                     {
                         //TODO generalise this to work for all axle types properly, copy what was done for Cogs
-                        Axle newAxle = PlaceAxle(closestAxle, map, closestSide);
+                        Axle newAxle = Axle.Place(closestAxle, map, closestSide);
                         bore.structures.Add(newAxle);
                         return newAxle;
                     }
 
                 }
-
-
             }
 
             else
             {
-
-                Console.WriteLine("test");
                 Vector2i pos = bore.FindClosestSupportedSlot(mousePos);
                 if (pos.X != -1)
                 {
-                    //var line = new VertexArray(PrimitiveType.Lines, 2);
-                    //line[0] = new Vertex(bore.IndextoCoords(new Vector2i(0,0)));
-                    //line[1] = new Vertex(bore.IndextoCoords(pos));
-                    //Program.window.Draw(line);aaaaaaaaa
-
-
                     buildingSprite.Position = bore.IndextoCoords(pos);
 
                     if (Program.mousePressed)
                     {
-                        GameObject newObject = PlaceBuilding(pos, bore);
+                        MethodInfo methodInfo = InfoType(buildingId).GetMethod("Place", BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+                        var args = new object[] { pos, bore, buildingId };
+                        GameObject newObject = (GameObject)methodInfo.Invoke(null, args);
+                        //GameObject newObject = type.Place(pos, bore, buildingId);
                         if (buildingMode == StructureType.Motor) map.axles.Add((Axle)newObject);
                         return newObject;
                     }
                 }
             }           
             return null;
-        }
-
-        public static Platform PlacePlatform(float x, float y, Cart cart, Map map)
-        {
-            building = false;
-            Platform newPlatform = new Platform(x, y, map.tileSize);
-
-            newPlatform.SetSprite(buildingSprite);
-            buildingSprite.Color = new Color(255, 255, 255, 255);
-            buildingSprite = null;
-            map.platforms.Add(newPlatform);
-            cart.platforms.Add(newPlatform);
-
-            return newPlatform;
-
-        }
-        public static Cart PlaceCart(float x, float y, Map map)
-        {
-            building = false;
-            Cart newCart = new Cart(x, y, map.tileSize);
-
-            newCart.SetSprite(buildingSprite);
-            buildingSprite.Color = new Color(255, 255, 255, 255);
-            buildingSprite = null;
-
-            map.carts.Add(newCart);
-            map.platforms.Add(newCart);
-            if (map.drivingCart == null)
-                map.drivingCart = newCart;
-
-            return newCart;
-        }
-
-        public static Axle PlaceAxle(Axle connectingAxle, Map map, OrthSlot side)
-        {
-            building = false;
-            Axle newAxle;
-            if (buildingMode == StructureType.Drillhead)
-                newAxle = new Drillhead(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2);
-            else if (buildingMode == StructureType.Cog)
-            {
-                if (connectingAxle is Cog)
-                    newAxle = new Cog(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);   //TEMP TODO open side = TOP & RIGHT hardcoded
-                else
-                    newAxle = new Cog(connectingAxle.GetX(), connectingAxle.GetY(), connectingAxle, side);   //TEMP TODO open side = TOP & RIGHT hardcoded
-            }
-
-            else
-                newAxle = new Axle(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2); //TEMP TODO side = 2 is only right side hard coded for now
-            newAxle.torque = connectingAxle.torque;
-            newAxle.SetSprite(buildingSprite);
-            buildingSprite.Color = new Color(255, 255, 255, 255);
-            buildingSprite = null;
-
-            map.axles.Add(newAxle);
-            if (!(buildingMode == StructureType.Cog && connectingAxle is Cog))
-            {
-                Console.WriteLine("Right closed");
-                connectingAxle.Right = newAxle;
-                connectingAxle.rightOpen = false;
-            }
-
-            return newAxle;
-        }
-        public static GameObject PlaceBuilding(Vector2i indexLoc, Bore br)
-        {
-            building = false;
-
-            if (indexLoc.X != -1)
-            {
-                Structure newObject;
-
-                if (buildingMode == StructureType.Ladder)
-                {
-                    newObject = Build.CreateStructure(indexLoc, br, 220);
-                    //newObject = new Ladder(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
-                }
-                else if (buildingMode == StructureType.Drill) //TODO this is OLD drill, remove
-                {
-                    newObject = null;
-                    //newObject = new Drill (br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
-                }
-                else if (buildingMode == StructureType.Motor)
-                {
-                    newObject = new Motor(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y, null, 3);
-                }
-                else //buildingMode == regular structure
-                {
-                    //newObject = new Structure(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
-                    newObject = Build.CreateStructure(indexLoc, br, 100);
-                }
-
-                br.AddStructure(newObject, indexLoc.X, indexLoc.Y);
-                //platform.BuildStructure(newObject, slot);
-                newObject.SetSprite(buildingSprite);
-                buildingSprite.Color = new Color(255, 255, 255, 255);
-                buildingSprite = null;
-                return newObject;
-            }
-            else
-            {
-                //TODO place error sound to indicate the building slot is full
-                buildingSprite = null;
-                SoundManager.PlayErrorSound();
-                return null;
-            }
-
-
         }
 
         public static void DrawBuildingSprite(RenderWindow window)
@@ -296,6 +182,11 @@ namespace BoringGame
         public static StructureType InfoStructureType(int id)
         {
             return (StructureType)info[id][1];
+        }
+
+        public static System.Type InfoType(int id)
+        {
+            return (System.Type)info[id][0];
         }
     }
 }

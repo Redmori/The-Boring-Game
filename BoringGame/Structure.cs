@@ -67,7 +67,7 @@ namespace BoringGame
             return dx;
         }
 
-        public static GameObject Place(Vector2i indexLoc, Bore br)
+        public static GameObject Place(Vector2i indexLoc, Bore br, int id)
         {
             Build.building = false;
 

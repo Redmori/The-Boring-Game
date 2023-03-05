@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using SFML.Graphics;
+using SFML.System;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -72,5 +73,20 @@ namespace BoringGame
 
         //    return new Vector2f(slotX + this.GetX(), this.GetY() - structureSize);
         //}
+
+        public static new Platform Place(float x, float y, Cart cart, Map map)
+        {
+            Build.building = false;
+            Platform newPlatform = new Platform(x, y, map.tileSize);
+
+            newPlatform.SetSprite(Build.buildingSprite);
+            Build.buildingSprite.Color = new Color(255, 255, 255, 255);
+            Build.buildingSprite = null;
+            map.platforms.Add(newPlatform);
+            cart.platforms.Add(newPlatform);
+
+            return newPlatform;
+
+        }
     }
 }

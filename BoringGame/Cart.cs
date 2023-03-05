@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFML.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -68,6 +69,21 @@ namespace BoringGame
             //TODO move all platforms ontop of this
         }
 
+        public static new Cart Place(float x, float y, Map map)
+        {
+            Build.building = false;
+            Cart newCart = new Cart(x, y, map.tileSize);
 
+            newCart.SetSprite(Build.buildingSprite);
+            Build.buildingSprite.Color = new Color(255, 255, 255, 255);
+            Build.buildingSprite = null;
+
+            map.carts.Add(newCart);
+            map.platforms.Add(newCart);
+            if (map.drivingCart == null)
+                map.drivingCart = newCart;
+
+            return newCart;
+        }
     }
 }
