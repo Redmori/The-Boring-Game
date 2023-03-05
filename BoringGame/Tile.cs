@@ -24,11 +24,15 @@ namespace BoringGame
         public float health;
         public float healthFull;
 
+        int id;
+
         public Tile(Sprite spr)
         {
             sprite = spr;
             passable = true;
             minable = true;
+
+            id = 2001; //TEMP id
 
             SetHealth(50);
         }
@@ -49,6 +53,8 @@ namespace BoringGame
                 {
                     passable = false;
                     minable = true;
+                        id = 2001; //TEMP id
+                        
                         break;
                 }
                 case TileType.Hard:
@@ -61,6 +67,7 @@ namespace BoringGame
                     {
                         passable = false;
                         minable = true;
+                        id = 2002; //TEMP id
                         SetHealth(100);
                         break;
                     }
@@ -71,7 +78,7 @@ namespace BoringGame
             health = h;
             healthFull = h;
         }
-        public void Mine(float power , Map map)
+        public Item Mine(float power , Map map)
         {
             health -= power;
 
@@ -83,7 +90,12 @@ namespace BoringGame
                 {
                     map.AddColumn();
                 }
+                if (id == 2001)
+                    return new Item(1001, 1); //TEMP default dirt when mining
+                else if (id == 2002)
+                    return new Item(1002, 3); //TEMP default resource when mining
             }
+            return null;
 
         }
 

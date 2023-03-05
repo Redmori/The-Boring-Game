@@ -166,7 +166,7 @@ namespace BoringGame
                 Tile tile = map.TileAtIndex(indexLoc);
                 if (tile != null && tile.minable && !tile.passable && Math.Abs(player.GetX() - tile.sprite.Position.X) < player.mineDistance && Math.Abs(player.GetY() - tile.sprite.Position.Y) < player.mineDistance)
                 {
-                    tile.Mine(0.5f, map);
+                    player.inventory.ReceiveItem(tile.Mine(0.5f, map));
                     //{
                     //    tile.SetType(Type.Empty);
                     //    if (indexLoc.X > map.width / 2)

@@ -239,25 +239,6 @@ namespace BoringGame
                         break;
                     }
             }
-
-
-
-            //if(connectingAxle is Cog) //if its a cog we are connecting to
-            //{
-            //    bottomOpen = true;
-            //    rightOpen = true;
-            //    Top = connectingAxle;
-            //    connectingAxle.Bottom = this;
-            //    connectingAxle.bottomOpen = false;
-            //}
-            //else //if its an axle we are connecting to
-            //{
-            //    bottomOpen = true;
-            //    rightOpen = true;
-            //    Left = connectingAxle;
-            //    connectingAxle.Right = this;
-            //    connectingAxle.rightOpen = false;
-            //}
         }
 
         public static new Axle Place(Axle connectingAxle, Map map, OrthSlot side)

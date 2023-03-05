@@ -14,6 +14,15 @@ namespace BoringGame
 {
     public class Inventory
     {
+        public static Dictionary<int, object[]> mats = new Dictionary<int, object[]>
+        {
+            //ID                   name                  stacksize    weight      power     example bonus info if needed
+            { 1001, new object[] { "Dirt"        ,1      ,100        ,0        ,1 } },
+            { 1002, new object[] { "Resource"        ,1      ,100        ,0        ,1 } }
+
+        };
+
+
         public StructureType[] contents;
         public Item[] items;
 
@@ -41,6 +50,7 @@ namespace BoringGame
             items[5] = new Item(500, 20);
             items[6] = new Item(510, 30);
             items[7] = new Item(530, 20);
+            items[8] = new Item(1001, 100);
 
 
 
@@ -101,12 +111,10 @@ namespace BoringGame
         public void StartBuilding(int hotkey)
         {
             if (items[hotkey-1] == null) return;
+            Build.buildingId = items[hotkey - 1].id;
+            if (!Build.InfoContains(Build.buildingId)) return;
             Build.buildingMode = Build.InfoStructureType(items[hotkey-1].id);
-            Build.buildingId = items[hotkey-1].id;
-            //buildingMode = contents[hotkey-1];    //OLD
             SpriteManager.StartBuilding(Build.buildingMode);
-            //buildingSprite = SpriteManager.GetStructureSprite(Build.buildingMode); //TODO change this to buildingID to have a sprite for each building
-            //Build.buildingSprite.Color = new Color(0, 255, 0, 128);
             Build.building = true;
         }
 
@@ -116,23 +124,60 @@ namespace BoringGame
             SpriteManager.ResetBuilding();
         }
 
-
-
+        public void ReceiveItem(Item item)
+        {
+            if(item == null) return;
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (items[i] == null) continue;
+                if (items[i].id == item.id)
+                {
+                    items[i].amount += item.amount;
+                    return;
+                }
+            }
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (items[i] == null)
+                {
+                    items[i] = item;
+                    break;
+                }
+            }
+        }
+        public void ConsumeItem(int id, int amount)
+        {
+            for(int i = 0; i < items.Length; i++)
+            {
+                if (items[i] == null) continue;
+                if (items[i].id == id)
+                {
+                    items[i].amount -= amount;
+                    if (items[i].amount <= 0) items[i] = null;
+                }
+            }
+        }
 
         public void DrawInventory(RenderWindow window, View view) //TODO this can probably be improved to not make a new text every frame
         {
             for (int i = 0; i < items.Length; i++)
             {
                 if (items[i] == null)
-                    break;
+                    continue;
                 Text newtext = new Text($"{i+1} - {items[i].toString()}", arial,19);
-                newtext.Color = Color.Red;
+                newtext.Color = new Color(0, 102, 0);
                 UIText text = new UIText(newtext, new Vector2f(-Program.windowWidth/2, i * 20f)) ;
 
                 text.UpdatePosition(view.Center);
 
                 text.text.Draw(window, RenderStates.Default);
             }
+        }
+        public static string MatsName(int id)
+        {
+            if(mats.ContainsKey(id))
+                return (string)mats[id][0];
+            return null;
         }
     }
 
@@ -149,7 +194,7 @@ namespace BoringGame
 
         public string toString()
         {
-            return $"{amount}x {Build.InfoName(id)} ";
+            return $"{amount}x {Inventory.MatsName(id)}{Build.InfoName(id)}";
         }
     }
     

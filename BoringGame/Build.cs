@@ -46,6 +46,8 @@ namespace BoringGame
             MethodInfo methodInfo = InfoType(buildingId).GetMethod("UpdateBuilding", BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
             var args = new object[] { mousePos, map, bore, buildingId };
             GameObject newObject = (GameObject)methodInfo.Invoke(null, args); //this runs Structure.Place(x,y,id) or one of its derived classes methods
+            if(newObject != null)
+                Program.player.inventory.ConsumeItem(buildingId, 1);
             return newObject;
         }
 
@@ -76,17 +78,28 @@ namespace BoringGame
         }
         public static string InfoName(int id)
         {
-            return (string)info[id][2];
+            if(info.ContainsKey(id))
+                return (string)info[id][2];
+            return null;
         }
 
         public static StructureType InfoStructureType(int id)
         {
-            return (StructureType)info[id][1];
+            if (info.ContainsKey(id))
+                return (StructureType)info[id][1];
+            return StructureType.Structure;
         }
 
         public static Type InfoType(int id)
         {
-            return (Type)info[id][0];
+            if (info.ContainsKey(id))
+                return (Type)info[id][0];
+            return null;
+        }
+
+        public static bool InfoContains(int id)
+        {
+            return info.ContainsKey(id);
         }
     }
 }
