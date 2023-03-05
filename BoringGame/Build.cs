@@ -48,7 +48,6 @@ namespace BoringGame
 
         public static GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore)
         {
-            Console.WriteLine("test1 " + buildingMode.ToString());
             if (buildingMode == StructureType.Cart)
             {
 
