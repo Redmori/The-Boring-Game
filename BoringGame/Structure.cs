@@ -2,6 +2,7 @@
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -67,6 +68,37 @@ namespace BoringGame
             return dx;
         }
 
+        public static new GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore, int id)
+        {
+            Vector2i pos = bore.FindClosestSupportedSlot(mousePos);
+            if (pos.X != -1)
+            {
+                SpriteManager.UpdateBuildingPos(bore.IndextoCoords(pos));
+
+                if (Program.mousePressed)
+                {
+                    System.Type currentType = Build.InfoType(id);
+                    MethodInfo methodInfo = null;
+                    while (currentType != null)
+                    {
+                        Console.WriteLine($"cyle {currentType}");
+                        methodInfo = currentType.GetMethod("Place", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                        if (methodInfo != null)
+                        {
+                            break;
+                        }
+                        currentType = currentType.BaseType;
+                    }
+                    var args = new object[] { pos, bore, id };
+                    GameObject newObject = (GameObject)methodInfo.Invoke(null, args); //this runs Structure.Place(x,y,id) or one of its derived classes methods
+                                                                                      //GameObject newObject = type.Place(pos, bore, buildingId);
+                    //if (buildingMode == StructureType.Motor) map.axles.Add((Axle)newObject);
+                    return newObject;
+                }
+            }
+            return null;
+        }
+
         public static GameObject Place(Vector2i indexLoc, Bore br, int id)
         {
             Build.building = false;
@@ -75,37 +107,27 @@ namespace BoringGame
             {
                 Structure newObject;
 
-                if (Build.buildingMode == StructureType.Ladder)
-                {
-                    newObject = Build.CreateStructure(indexLoc, br, 220);
-                    //newObject = new Ladder(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
-                }
-                else if (Build.buildingMode == StructureType.Drill) //TODO this is OLD drill, remove
-                {
-                    newObject = null;
-                    //newObject = new Drill (br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
-                }
-                else if (Build.buildingMode == StructureType.Motor)
+                if (Build.buildingMode == StructureType.Motor)
                 {
                     newObject = new Motor(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y, null, 3);
                 }
                 else //buildingMode == regular structure
                 {
                     //newObject = new Structure(br.IndextoCoords(indexLoc).X, br.IndextoCoords(indexLoc).Y);
-                    newObject = Build.CreateStructure(indexLoc, br, 100);
+                    newObject = Build.CreateStructure(indexLoc, br, id);
                 }
 
                 br.AddStructure(newObject, indexLoc.X, indexLoc.Y);
                 //platform.BuildStructure(newObject, slot);
-                newObject.SetSprite(Build.buildingSprite);
-                Build.buildingSprite.Color = new Color(255, 255, 255, 255);
-                Build.buildingSprite = null;
+                SpriteManager.Build(newObject);
+                //newObject.SetSprite(Build.buildingSprite);
+                //Build.buildingSprite.Color = new Color(255, 255, 255, 255);
+                //Build.buildingSprite = null;
                 return newObject;
             }
             else
             {
-                //TODO place error sound to indicate the building slot is full
-                Build.buildingSprite = null;
+                SpriteManager.ResetBuilding();
                 SoundManager.PlayErrorSound();
                 return null;
             }

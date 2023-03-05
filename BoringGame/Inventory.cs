@@ -37,6 +37,10 @@ namespace BoringGame
             items[1] = new Item(210, 10);
             items[2] = new Item(220, 5);
             items[3] = new Item(100, 5);
+            items[4] = new Item(520, 2);
+            items[5] = new Item(500, 20);
+            items[6] = new Item(510, 30);
+            items[7] = new Item(530, 20);
 
 
 
@@ -60,7 +64,7 @@ namespace BoringGame
                 CancelBuilding();
             }
 
-            if (Build.building && Build.buildingSprite != null) //place building indicator on the closest slot of a platform
+            if (Build.building && SpriteManager.BuildActive()) //place building indicator on the closest slot of a platform
             {
                 return Build.UpdateBuilding(mousePos, map, bore);                                
             }
@@ -100,15 +104,16 @@ namespace BoringGame
             Build.buildingMode = Build.InfoStructureType(items[hotkey-1].id);
             Build.buildingId = items[hotkey-1].id;
             //buildingMode = contents[hotkey-1];    //OLD
-            Build.buildingSprite = SpriteManager.GetStructureSprite(Build.buildingMode); //TODO change this to buildingID to have a sprite for each building
-            Build.buildingSprite.Color = new Color(0, 255, 0, 128);
+            SpriteManager.StartBuilding(Build.buildingMode);
+            //buildingSprite = SpriteManager.GetStructureSprite(Build.buildingMode); //TODO change this to buildingID to have a sprite for each building
+            //Build.buildingSprite.Color = new Color(0, 255, 0, 128);
             Build.building = true;
         }
 
         public void CancelBuilding()
         {
             Build.building = false;
-            Build.buildingSprite = null;
+            SpriteManager.ResetBuilding();
         }
 
 

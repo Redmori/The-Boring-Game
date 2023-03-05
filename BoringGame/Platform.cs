@@ -74,14 +74,41 @@ namespace BoringGame
         //    return new Vector2f(slotX + this.GetX(), this.GetY() - structureSize);
         //}
 
+        public static new GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore, int id)
+        {
+            //loop over all carts to see which one is closest x wise and place it on top of there
+            Cart closestCart = null;
+            float closestDist = float.MaxValue;
+            foreach (Cart cart in map.carts)
+            {
+                if (Math.Abs(cart.GetX() - mousePos.X) < closestDist)
+                {
+                    closestDist = Math.Abs(cart.GetX() - mousePos.X);
+                    closestCart = cart;
+                }
+            }
+            if (closestCart != null)
+            {
+                float platformY = closestCart.GetY() - (closestCart.platforms.Count + 1) * (2f * map.tileSize);
+                SpriteManager.UpdateBuildingPos(new Vector2f(closestCart.GetX(), platformY));
+
+                if (Program.mousePressed)
+                {
+                    bore.AddPlatform(closestCart);
+                    return Platform.Place(closestCart.GetX(), platformY, closestCart, map);
+                }
+            }
+
+            return null;
+        }
+
         public static new Platform Place(float x, float y, Cart cart, Map map)
         {
             Build.building = false;
             Platform newPlatform = new Platform(x, y, map.tileSize);
 
-            newPlatform.SetSprite(Build.buildingSprite);
-            Build.buildingSprite.Color = new Color(255, 255, 255, 255);
-            Build.buildingSprite = null;
+            SpriteManager.Build(newPlatform);
+
             map.platforms.Add(newPlatform);
             cart.platforms.Add(newPlatform);
 

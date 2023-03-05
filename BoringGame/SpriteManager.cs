@@ -9,6 +9,8 @@ namespace BoringGame
 {
     class SpriteManager
     {
+        public static Sprite buildingSprite;
+
         public static string path = "../../../Content/";
         public static Texture empty_tex = new Texture(path + "Empty.png");
         public static Texture ground_tex = new Texture(path + "Ground.png");
@@ -148,6 +150,35 @@ namespace BoringGame
             int ry = r.Next(0, ny);
             return new Sprite(tex, new IntRect(rx * 50, ry* 50, 50, 50));
 
+        }
+
+        public static void StartBuilding(StructureType mode) //todo, replace with id to find correct sprite
+        {
+            buildingSprite = SpriteManager.GetStructureSprite(mode); //TODO change this to buildingID to have a sprite for each building
+            buildingSprite.Color = new Color(0, 255, 0, 128);
+        }
+
+        public static void UpdateBuildingPos(Vector2f pos)
+        {
+            buildingSprite.Position = pos;
+        }
+        public static void Build(GameObject newBuild)
+        {
+            newBuild.SetSprite(buildingSprite);
+            Console.WriteLine("1");
+            buildingSprite.Color = new Color(255, 255, 255, 255);
+            Console.WriteLine("2");
+            ResetBuilding();
+        }
+
+        public static bool BuildActive()
+        {
+            return buildingSprite != null;
+        }
+
+        public static void ResetBuilding()
+        {
+            buildingSprite = null;
         }
 
     }

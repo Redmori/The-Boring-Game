@@ -131,6 +131,42 @@ namespace BoringGame
             return new Vector2f(GetX(),GetY());
         }
 
+        public static new GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore, int id)
+        {
+            Axle closestAxle = null;
+            float closestD = float.MaxValue;
+            OrthSlot closestSide = OrthSlot.Top;
+            foreach (Axle nearAxle in map.axles)
+            {
+                (OrthSlot slot, float dist) = nearAxle.FindClosestOpenSlot(mousePos);
+                if (dist < closestD)
+                {
+                    closestD = dist;
+                    closestAxle = nearAxle;
+                    closestSide = slot;
+                }
+            }
+            if (closestAxle != null && closestD != float.MaxValue)
+            {
+                SpriteManager.UpdateBuildingPos(closestAxle.GetNeighbourCoordinates(closestSide));
+                // if (buildingMode == StructureType.Cog && closestAxle is Cog)
+                //     buildingSprite.Position = new Vector2f(closestAxle.GetX(), closestAxle.GetY() + Structure.structureSize);
+
+                //if mouse is clicked, place the actual structure
+                if (Program.mousePressed)
+                {
+                    //TODO generalise this to work for all axle types properly, copy what was done for Cogs
+                    Axle newAxle = Axle.Place(closestAxle, map, closestSide);
+                    bore.structures.Add(newAxle);
+                    return newAxle;
+                }
+
+            }
+
+            return null;
+        }
+
+
         public static new Axle Place(Axle connectingAxle, Map map, OrthSlot side)
         {
             Build.building = false;
@@ -148,9 +184,11 @@ namespace BoringGame
             else
                 newAxle = new Axle(connectingAxle.GetX() + Structure.structureSize, connectingAxle.GetY(), connectingAxle, 2); //TEMP TODO side = 2 is only right side hard coded for now
             newAxle.torque = connectingAxle.torque;
-            newAxle.SetSprite(Build.buildingSprite);
-            Build.buildingSprite.Color = new Color(255, 255, 255, 255);
-            Build.buildingSprite = null;
+
+            SpriteManager.Build(newAxle);
+            //newAxle.SetSprite(Build.buildingSprite); //OLD
+            //Build.buildingSprite.Color = new Color(255, 255, 255, 255);
+            //Build.buildingSprite = null;
 
             map.axles.Add(newAxle);
             if (!(Build.buildingMode == StructureType.Cog && connectingAxle is Cog))
@@ -249,7 +287,20 @@ namespace BoringGame
                 case 3: rightOpen = true; break;   
             }
         }
-    }
+
+        public static new GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore, int id)
+        {
+            GameObject newMotor = Structure.UpdateBuilding(mousePos, map, bore, id);
+            if(newMotor != null)
+                map.axles.Add((Axle)newMotor);
+            return newMotor;
+        }
+
+        public static new GameObject Place(Vector2i indexLoc, Bore br, int id)
+        {
+            return Structure.Place(indexLoc, br, id);
+        }
+}
 
     public class AxledMachine : Axle
     {

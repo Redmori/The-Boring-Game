@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.System;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -69,14 +70,44 @@ namespace BoringGame
             //TODO move all platforms ontop of this
         }
 
+        public static new Cart UpdateBuilding(Vector2f mousePos, Map map, Bore bore, int id)
+        {
+            if (bore != null)
+            {
+                //float totalWidth = 0;
+                //foreach (Cart cart in map.carts)
+                //{
+                //    totalWidth += cart.halfWidth * 2;
+                //}
+                //totalWidth = totalWidth - map.drivingCart.halfWidth + map.tileSize; //TODO map.tileSize = halfwidth of the placing cart
+                //buildingSprite.Position = new Vector2f(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y);
+
+                Vector2f backpos = bore.IndextoCoords(new Vector2i(bore.GetSize().X, 0));
+
+                SpriteManager.UpdateBuildingPos(backpos);
+                //buildingSprite.Position = backpos;
+
+                if (Program.mousePressed)
+                    return Cart.Place(backpos.X, backpos.Y, map);
+                //    return PlaceCart(map.drivingCart.GetX() - totalWidth, map.tiles[0][map.height - 2].sprite.Position.Y, map);
+            }
+            else
+            {
+                SpriteManager.UpdateBuildingPos(new Vector2f(mousePos.X, map.tiles[0][map.height - 2].sprite.Position.Y));
+
+                if (Program.mousePressed)
+                    return Cart.Place(mousePos.X, map.tiles[0][map.height - 2].sprite.Position.Y, map);
+            }
+            return null;
+        }
+
         public static new Cart Place(float x, float y, Map map)
         {
             Build.building = false;
             Cart newCart = new Cart(x, y, map.tileSize);
 
-            newCart.SetSprite(Build.buildingSprite);
-            Build.buildingSprite.Color = new Color(255, 255, 255, 255);
-            Build.buildingSprite = null;
+
+            SpriteManager.Build(newCart);
 
             map.carts.Add(newCart);
             map.platforms.Add(newCart);
