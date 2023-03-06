@@ -127,7 +127,15 @@ namespace BoringGame
             this.speed = spd; ;
         }
 
+        public void Update(float dt)
+        {
+            foreach(Structure structure in structures) 
+                structure.Update(dt);
 
+            float dx = GetSpeed() * dt;
+            dx = CollisionCheckRight(dx, Program.map);
+            Move(dx);
+        }
         public void Move(float dx)
         {
             //move all structures

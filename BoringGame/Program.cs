@@ -193,9 +193,8 @@ namespace BoringGame
             //Move Carts
             if (bore != null)
             {
-                float dx = bore.GetSpeed() * dt;
-                dx = bore.CollisionCheckRight(dx, map);
-                bore.Move(dx);
+                bore.Update(dt);
+
 
                 //TEST speedup:
                 //map.drivingCart.cartSpeed = map.drivingCart.cartSpeed * 1.0001f;
