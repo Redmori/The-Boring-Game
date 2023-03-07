@@ -179,7 +179,9 @@ namespace BoringGame
 
         public Structure StructureAtIndex(Vector2i index)
         {
-            return structureMap[index.X, index.Y];
+            if (index.X < 0 || index.Y < 0 ||  index.X >= structureMap.GetLength(0) || index.Y >= structureMap.GetLength(1))
+                return null;
+            return structureMap[index.X, index.Y-3];
         }
     }
 }

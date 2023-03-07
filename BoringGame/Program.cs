@@ -175,6 +175,29 @@ namespace BoringGame
                     //    }
                     //}
                 }
+
+                //click on a structure
+                if (bore != null)
+                {
+                    Vector2i index = bore.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)));
+                    if (index != null)
+                    {
+                        Structure clickedStructure = bore.StructureAtIndex(index);
+                        List<Item> loot = null;
+                        if (clickedStructure != null && clickedStructure.crafter != null)
+                        {
+                            loot = clickedStructure.crafter.Loot();
+                            clickedStructure.crafter.AddInput(player.inventory.ConsumeItem(new Item(1001, 1))); //TEMP hardcoded to remove 1 dirt from inventory and put in crafter
+                        }
+                        if (loot != null)
+                            foreach (Item item in loot)
+                            {
+                                player.inventory.ReceiveItem(item);
+                            }
+                    }
+                }
+
+
             }
 
             ////Place Cart TEMP
@@ -284,6 +307,8 @@ namespace BoringGame
             //Draw the player
             player.GetSprite().Draw(window, RenderStates.Default);
 
+            //Draw texts
+            TextManager.Draw(window);
 
             //Draw the UI texts
             foreach (UIText text in uitexts)

@@ -1,4 +1,7 @@
 ﻿using BoringGame;
+using SFML.Graphics;
+using SFML.System;
+using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +18,14 @@ namespace BoringGame
         public bool isCrafting = false;
         public float craftingProgress = 0;
 
+        public Text tooltip;
+
         public Crafter()
         {
             input = new Contents();
             output = new Contents();
+
+            tooltip = TextManager.AddText(TooltipString(), new Vector2f(0,0));
         }
 
         public void Update(float dt)
@@ -38,7 +45,23 @@ namespace BoringGame
                 FinishCraft();
             }
         }
-
+        public void AddInput(Item[] items)
+        {
+            input.Add(items);
+            UpdateTooltip();
+        }
+        public void AddInput(Item item)
+        {
+            input.Add(item);
+            UpdateTooltip();
+        }
+        public List<Item> Loot()
+        {
+            List<Item> loot = output.items;
+            output.items = new List<Item>();
+            //TODO update output string
+            return loot;
+        }
         public void SetRecipe(Recipe rec)
         {
             recipe = rec;
@@ -51,6 +74,7 @@ namespace BoringGame
                 Write();
                 isCrafting = true;
                 input.Remove(recipe.input);
+                UpdateTooltip();
 
             }
         }
@@ -58,7 +82,7 @@ namespace BoringGame
         public void FinishCraft()
         {
             output.Add(recipe.output);
-
+            UpdateTooltip();
             isCrafting = false;
         }
 
@@ -69,6 +93,15 @@ namespace BoringGame
             Console.WriteLine($"Input: {input.ToString()}");
             Console.WriteLine($"Output: {output.ToString()}");
             Console.WriteLine("================================");
+        }
+
+        public void UpdateTooltip()
+        {
+            tooltip.DisplayedString = TooltipString();
+        }
+        public string TooltipString()
+        {
+            return $"{input.ToString()}\n{output.ToString()}";
         }
     }
 
@@ -118,12 +151,11 @@ namespace BoringGame
             {
                 if (currentItem.id == addedItem.id)
                 {
-
                     currentItem.amount += remaining;
-                    int stackSize = 200;    //stack size hardcoded, use currentItem.stacksize 
+                    int stackSize = 2000;    //stack size hardcoded, use currentItem.stacksize 
                     if (currentItem.amount > stackSize)
                     {
-                        remaining += currentItem.amount - stackSize;
+                        remaining = currentItem.amount - stackSize;
                         currentItem.amount = stackSize;
                     }
                     else remaining = 0;

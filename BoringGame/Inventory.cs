@@ -145,17 +145,22 @@ namespace BoringGame
                 }
             }
         }
-        public void ConsumeItem(int id, int amount)
+        public Item ConsumeItem(Item item)
         {
+            int returnAmount = 0;
             for(int i = 0; i < items.Length; i++)
             {
                 if (items[i] == null) continue;
-                if (items[i].id == id)
+                if (items[i].id == item.id)
                 {
-                    items[i].amount -= amount;
+                    returnAmount += items[i].amount;
+                    items[i].amount -= item.amount;
                     if (items[i].amount <= 0) items[i] = null;
                 }
             }
+            if (returnAmount > item.amount) returnAmount = item.amount;
+
+            return new Item(item.id, returnAmount);
         }
 
         public void DrawInventory(RenderWindow window, View view) //TODO this can probably be improved to not make a new text every frame

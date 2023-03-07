@@ -42,13 +42,18 @@ namespace BoringGame
                 crafter = new Crafter();
                 Recipe recipe = new Recipe(new Item[] { new Item(1001,5) }, new Item[] { new Item(1002, 1) }, 1f);
                 crafter.SetRecipe(recipe);
-                crafter.input.Add(new Item(1001, 50));
+                crafter.AddInput(new Item(1001, 50));
             }
         }
 
         public virtual void Update(float dt)
         {
-            if(crafter != null) crafter.Update(dt);
+            if (crafter != null)
+            {
+                crafter.Update(dt);
+                if(crafter.tooltip != null) 
+                    crafter.tooltip.Position = new Vector2f(GetX(),GetY());
+            }
         }
 
         public bool CollisionCheckRight(float dx, Map map)

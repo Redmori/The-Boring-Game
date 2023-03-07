@@ -47,7 +47,7 @@ namespace BoringGame
             var args = new object[] { mousePos, map, bore, buildingId };
             GameObject newObject = (GameObject)methodInfo.Invoke(null, args); //this runs Structure.Place(x,y,id) or one of its derived classes methods
             if(newObject != null)
-                Program.player.inventory.ConsumeItem(buildingId, 1);
+                Program.player.inventory.ConsumeItem(new Item(buildingId, 1));
             return newObject;
         }
 
