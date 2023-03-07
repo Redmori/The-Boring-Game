@@ -177,24 +177,15 @@ namespace BoringGame
                 }
 
                 //click on a structure
-                if (bore != null)
+                if (bore?.StructureAtIndex((Vector2i)(bore?.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)))))?.crafter is Crafter clickedCrafter)
                 {
-                    Vector2i index = bore.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)));
-                    if (index != null)
-                    {
-                        Structure clickedStructure = bore.StructureAtIndex(index);
-                        List<Item> loot = null;
-                        if (clickedStructure != null && clickedStructure.crafter != null)
+                    List<Item> loot = clickedCrafter.Loot();
+                    clickedCrafter.AddInput(player.inventory.ConsumeItem(new Item(1001, 1))); //TEMP hardcoded to remove 1 dirt from inventory and put in crafter
+                    if (loot != null)
+                        foreach (Item item in loot)
                         {
-                            loot = clickedStructure.crafter.Loot();
-                            clickedStructure.crafter.AddInput(player.inventory.ConsumeItem(new Item(1001, 1))); //TEMP hardcoded to remove 1 dirt from inventory and put in crafter
+                            player.inventory.ReceiveItem(item);
                         }
-                        if (loot != null)
-                            foreach (Item item in loot)
-                            {
-                                player.inventory.ReceiveItem(item);
-                            }
-                    }
                 }
 
 
