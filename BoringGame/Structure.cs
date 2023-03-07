@@ -31,6 +31,7 @@ namespace BoringGame
         public float weight;
 
         public Crafter crafter; //TEMP crafter
+        public IStructureFunctionality functionality; //The functionality of this structure, i.e. crafter
 
         public Structure(float x, float y, int id) : base(x, y)
         {
@@ -40,20 +41,15 @@ namespace BoringGame
             if(id == 100)
             {
                 crafter = new Crafter();
-                Recipe recipe = new Recipe(new Item[] { new Item(1001,5) }, new Item[] { new Item(1002, 1) }, 1f);
-                crafter.SetRecipe(recipe);
+                crafter.SetRecipe(Craft.GetRecipe(1));
                 crafter.AddInput(new Item(1001, 50));
+                functionality = crafter;
             }
         }
 
         public virtual void Update(float dt)
         {
-            if (crafter != null)
-            {
-                crafter.Update(dt);
-                if(crafter.tooltip != null) 
-                    crafter.tooltip.Position = new Vector2f(GetX(),GetY());
-            }
+            functionality?.Update(dt, new Vector2f(GetX(), GetY()));    //Update the functionality, i.e. crafter
         }
 
         public bool CollisionCheckRight(float dx, Map map)

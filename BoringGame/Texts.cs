@@ -13,6 +13,8 @@ namespace BoringGame
         public static List<Text> texts = new List<Text>();
         public static Font arial = new Font("../../../Content/ArialCEMTBlack.ttf");
 
+        //public static List<RectangleShape> shapes = new List<RectangleShape>(); //TEMP for progress bar
+
         public static void Draw(Window window)
         {
             foreach (Text text in texts)
@@ -29,6 +31,11 @@ namespace BoringGame
             texts.Add(text);
             return text;
         }
+
+        //public static void AddProgressBar(RectangleShape shape)
+        //{
+        //    shapes.Add(shape);
+        //}
     }
 
 

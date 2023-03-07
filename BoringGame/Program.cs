@@ -64,7 +64,7 @@ namespace BoringGame
 
             windowX = window.Position.X;
             windowY = window.Position.Y;
-
+            
             view = new View(new Vector2f(windowWidth/2f,windowHeight/2f), new Vector2f(windowWidth, windowHeight));
             window.SetView(view);
 

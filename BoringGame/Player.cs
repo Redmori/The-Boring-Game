@@ -11,6 +11,7 @@ namespace BoringGame
     public class Player : GameObject
     {
         public float speed;
+
         public float halfSizeX;
         public float halfSizeY;
 
@@ -383,7 +384,12 @@ namespace BoringGame
                 //float yDist = Math.Abs(ladder.GetY() - map.tileSize / 2 - GetY());
                 if (Math.Abs(ladder.GetX() - GetX()) < halfSizeX && Math.Abs(ladder.GetY() - map.tileSize / 2 - GetY()) < halfSizeY + map.tileSize)
                 {
+                    float snapSpeed = 0.25f;                                //TODO improve this to be dependend on dt and make it actually snap to the center
                     this.MoveX(CollisionCheckRight(ladder.previousDX, map));
+                    if(ladder.GetX() - GetX() > -snapSpeed)
+                        this.MoveX(CollisionCheckRight(snapSpeed, map));
+                    else if (ladder.GetX() - GetX() < snapSpeed)
+                        this.MoveX(-snapSpeed);
                     return true;
                 }
             }

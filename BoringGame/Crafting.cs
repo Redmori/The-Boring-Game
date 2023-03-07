@@ -4,12 +4,29 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
 namespace BoringGame
 {
-    public class Crafter
+    public static class Craft
+    {
+        public static int recipesInfoDuration = 1; public static int recipesInfoName = 2; public static int recipesInfoInput = 3; public static int recipesInfoOutput = 4;
+        public static Dictionary<int, object[]> recipesInfo = new Dictionary<int, object[]>
+        {
+            //ID                  temp        duratio      name               input                                      output
+            { 1, new object[] { "temp"        ,1f    ,"Burner Furnace"        ,new Item[] { new Item(1001, 5) }       ,new Item[] { new Item(1002, 1) }, } },
+
+        };
+
+        public static Recipe GetRecipe(int recipeId)
+        {
+            return new Recipe((Item[])recipesInfo[recipeId][3], (Item[])recipesInfo[recipeId][4], (float)recipesInfo[recipeId][1]);
+        }
+    }
+
+    public class Crafter : IStructureFunctionality
     {
         public Recipe recipe;
         public Contents input;
@@ -19,6 +36,8 @@ namespace BoringGame
         public float craftingProgress = 0;
 
         public Text tooltip;
+        //RectangleShape progressBar;
+        //RectangleShape progressFill;
 
         public Crafter()
         {
@@ -26,13 +45,37 @@ namespace BoringGame
             output = new Contents();
 
             tooltip = TextManager.AddText(TooltipString(), new Vector2f(0,0));
+
+
+            ////TEMP progress bar:      
+            //progressBar = new RectangleShape(new Vector2f(200, 20));
+            //progressBar.FillColor = Color.Black;
+            //progressBar.Position = new Vector2f(50, 50);
+
+            //progressFill = new RectangleShape(new Vector2f(10, 20));
+            //progressFill.FillColor = Color.Green;
+            //progressFill.Position = progressBar.Position;
+
+            //TextManager.AddProgressBar(progressBar);
+            //TextManager.AddProgressBar(progressFill);
         }
 
-        public void Update(float dt)
+        public void Update(float dt, Vector2f pos)
         {
             if (recipe == null) return;
             StartCraft(); //Maybe unwise to do this every loop, only when input/output/recipe change?
             if (isCrafting) Craft(dt);
+            if (tooltip != null)
+                tooltip.Position = pos;
+
+            ////TEMP progress bar
+            //if (isCrafting)
+            //{
+            //    float progress = craftingProgress / recipe.duration;
+            //    progressBar.Position = pos;
+            //    progressFill = new RectangleShape(new Vector2f(progressBar.Size.X * progress, progressBar.Size.Y));
+            //    progressFill.Position = pos;
+            //}
         }
 
         public void Craft(float dt)
@@ -103,6 +146,12 @@ namespace BoringGame
         {
             return $"{input.ToString()}\n{output.ToString()}";
         }
+    }
+
+    public interface IStructureFunctionality
+    {
+        void Update(float dt, Vector2f pos);
+
     }
 
 
