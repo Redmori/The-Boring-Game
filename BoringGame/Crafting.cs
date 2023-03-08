@@ -38,6 +38,7 @@ namespace BoringGame
         public Text tooltip;
         //RectangleShape progressBar;
         //RectangleShape progressFill;
+        VertexArray progressBar = TextManager.GetCenteredRectangle(new Vector2f(100, 20), new Vector2f(0, 0), Color.Cyan);
 
         public Crafter()
         {
@@ -46,6 +47,7 @@ namespace BoringGame
 
             tooltip = TextManager.AddText(TooltipString(), new Vector2f(0,0));
 
+            progressBar = TextManager.GetRectangle(new Vector2f(100, 20), new Vector2f(0, 0), Color.Cyan);
 
             ////TEMP progress bar:      
             //progressBar = new RectangleShape(new Vector2f(200, 20));
@@ -68,6 +70,15 @@ namespace BoringGame
             if (tooltip != null)
                 tooltip.Position = pos;
 
+            if (isCrafting)
+            {
+                float progress = craftingProgress / recipe.duration;
+                progressBar = TextManager.UpdateRectangle(progressBar, new Vector2f(Structure.structureSize * progress, 3), pos - new Vector2f(0,-7f), Color.Cyan);
+            }
+            else
+            {
+                TextManager.RemoveRectangle(progressBar);
+            }
             ////TEMP progress bar
             //if (isCrafting)
             //{
@@ -118,6 +129,7 @@ namespace BoringGame
                 isCrafting = true;
                 input.Remove(recipe.input);
                 UpdateTooltip();
+                TextManager.AddRectangle(progressBar);
 
             }
         }

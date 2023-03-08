@@ -14,39 +14,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="sfml-audio">
-      <HintPath>..\SFML.Net-2.4\lib\sfml-audio.dll</HintPath>
-    </Reference>
-    <Reference Include="sfml-graphics">
-      <HintPath>..\SFML.Net-2.4\lib\sfml-graphics.dll</HintPath>
-    </Reference>
-    <Reference Include="sfml-system">
-      <HintPath>..\SFML.Net-2.4\lib\sfml-system.dll</HintPath>
-    </Reference>
-    <Reference Include="sfml-window">
-      <HintPath>..\SFML.Net-2.4\lib\sfml-window.dll</HintPath>
-    </Reference>
+    <None Remove="csfml-audio-2.dll" />
+    <None Remove="csfml-graphics-2.dll" />
+    <None Remove="csfml-system-2.dll" />
+    <None Remove="csfml-window-2.dll" />
+    <None Remove="openal32.dll" />
+    <None Remove="OpenTK.dll" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="csfml-audio-2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="csfml-graphics-2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="csfml-system-2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="csfml-window-2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="openal32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="OpenTK.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="SFML.Net" Version="2.5.0" />
   </ItemGroup>
 
 </Project>
