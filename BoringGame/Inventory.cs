@@ -28,6 +28,8 @@ namespace BoringGame
 
         Font arial = new Font("../../../Content/ArialCEMTBlack.ttf");
 
+        public Popup popup;
+
         public Inventory()
         {
             contents = new StructureType[20];
@@ -52,13 +54,15 @@ namespace BoringGame
             items[7] = new Item(530, 20);
             items[8] = new Item(1001, 100);
 
-
+            popup = new Popup();
+            ScreenSquare rect = new ScreenButton(new Vector2f(300, 250), new Vector2f(0, 0));
+            popup.elements.Add(rect);
 
         }
 
         public GameObject CheckBuilding(Vector2f mousePos, Map map, Bore bore)
         {
-           
+
             if(!Build.building && HotKeyPressed() != -1)
             {
                 StartBuilding(HotKeyPressed());

@@ -312,6 +312,7 @@ namespace BoringGame
             player.inventory.DrawInventory(window, view);
 
             //TODO: implement world space texts, and timer texts etc
+            UIManager.Update(window);
 
             //Draw building indicator
             Build.DrawBuildingSprite(window);
@@ -406,6 +407,10 @@ namespace BoringGame
             if (e.Code == Keyboard.Key.P)
             {
                 Drillhead.drillPower *= 2; // TEST parameter increase drillpower
+            }
+            if(e.Code == Keyboard.Key.Tab)
+            {
+                UIManager.TogglePopup(player.inventory.popup);
             }
         }
         private static void window_Resized(object sender, SizeEventArgs e)

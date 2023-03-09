@@ -46,6 +46,12 @@ namespace BoringGame
             shapes.Add(rect);
             return rect;
         }
+        public static VertexArray GetCenteredRectangle2(Vector2f halfSize, Vector2f pos, Color colour) //TEMP is the same as previous method, just doesnt add to the shapes list
+        {
+
+            VertexArray rect = new VertexArray(PrimitiveType.Quads, 4);
+            return rect;
+        }
 
         public static VertexArray UpdateCenteredRectangle(VertexArray rect, Vector2f halfSize, Vector2f pos, Color colour)
         {
