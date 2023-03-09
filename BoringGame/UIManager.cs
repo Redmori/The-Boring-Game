@@ -69,6 +69,14 @@ namespace BoringGame
             offset = off;
         }
 
+        public bool CheckClick(Vector2f mousePos)
+        {
+            foreach (IScreenElement element in elements)
+                if (element is ScreenButton && ((ScreenButton)element).active)
+                    return ((ScreenButton)element).Contains(mousePos);
+            return false;
+        }
+
         public void Activate()
         {
             foreach (IScreenElement element in elements)
@@ -113,26 +121,26 @@ namespace BoringGame
 
         public ScreenButton(Vector2f sz, Vector2f off) : base(sz, off)
         {
-            Program.window.MouseButtonPressed += window_MouseButtonPressed;
+            //Program.window.MouseButtonPressed += window_MouseButtonPressed;
         }
 
         public bool IsPressed()
         {
             return isPressed;
         }
-        private void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
-        {
-            if (active && e.Button == Mouse.Button.Left)
-            {
-                Vector2f mousePos = new Vector2f(Mouse.GetPosition(Program.window).X, Mouse.GetPosition(Program.window).Y);
+        //private void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+        //{
+        //    if (active && e.Button == Mouse.Button.Left)
+        //    {
+        //        Vector2f mousePos = new Vector2f(Mouse.GetPosition(Program.window).X, Mouse.GetPosition(Program.window).Y);
 
-                if (Contains(mousePos))
-                {
-                    isPressed = true;
-                    Console.WriteLine("pressing button");
-                }
-            }
-        }
+        //        if (Contains(mousePos))
+        //        {
+        //            isPressed = true;
+        //            Console.WriteLine("pressing button");
+        //        }
+        //    }
+        //}
         //OLD
         //public void HandleEvents(RenderWindow window, Event e)
         //{

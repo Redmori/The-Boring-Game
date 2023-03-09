@@ -387,6 +387,10 @@ namespace BoringGame
         private static void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
         {
             mousePressed = true;
+
+            bool clicked = false;
+            if(!clicked)
+            _ = player.inventory.CheckClick(new Vector2f(Mouse.GetPosition(window).X, Mouse.GetPosition(window).Y));
         }
 
         static void window_KeyReleased(object sender, KeyEventArgs e)

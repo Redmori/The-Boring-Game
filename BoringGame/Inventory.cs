@@ -60,6 +60,18 @@ namespace BoringGame
 
         }
 
+        public bool CheckClick(Vector2f mousePos)
+        {
+            if (popup.CheckClick(mousePos))
+            {
+                //TODO, perform action based on click here?
+                Console.WriteLine("inventory clicked");
+                return true;
+            }
+         
+            return false;
+        }
+
         public GameObject CheckBuilding(Vector2f mousePos, Map map, Bore bore)
         {
 
