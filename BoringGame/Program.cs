@@ -67,7 +67,7 @@ namespace BoringGame
             
             view = new View(new Vector2f(windowWidth/2f,windowHeight/2f), new Vector2f(windowWidth, windowHeight));
             window.SetView(view);
-
+         
             Console.WriteLine("Window opened!");
 
             //Load sounds
@@ -78,7 +78,7 @@ namespace BoringGame
                         
             //initialize player
             player = new Player(map.progress* map.tileSize - 5 * map.tileSize, map.tileSize * (map.height - 4), 200f, player_tex) ;
-
+            
 
             //initialize texts
             uitexts = new List<UIText>();
@@ -322,7 +322,9 @@ namespace BoringGame
             mouse_sprite.Position = window.MapPixelToCoords(Mouse.GetPosition(window));
             mouse_sprite.Draw(window, RenderStates.Default);
 
-
+            //RectangleShape shape = new RectangleShape(new Vector2f(100, 100));
+            //shape.Position = mouse_sprite.Position;
+            //shape.Draw(window, RenderStates.Default);
         }
 
         public static void calcFPS(float dt)

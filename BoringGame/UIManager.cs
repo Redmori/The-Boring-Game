@@ -72,8 +72,13 @@ namespace BoringGame
         public bool CheckClick(Vector2f mousePos)
         {
             foreach (IScreenElement element in elements)
-                if (element is ScreenButton && ((ScreenButton)element).active)
-                    return ((ScreenButton)element).Contains(mousePos);
+                if (element is ScreenButton button && button.active)
+                    //{
+
+                    //    renderwindow window = program.window;
+                    //    return ((screenbutton)element).rectangle.getglobalbounds().contains(window.mappixeltocoords(mouse.getposition(window)).x, window.mappixeltocoords(mouse.getposition(window)).y);
+                    //}
+                    return button.Contains(mousePos);
             return false;
         }
 
@@ -164,7 +169,7 @@ namespace BoringGame
     {
         public Vector2f size;
         public Vector2f offset;
-        public VertexArray rectangle;
+        public RectangleShape rectangle;
 
         public ScreenSquare(Vector2f sz, Vector2f off)
         {
@@ -187,8 +192,8 @@ namespace BoringGame
 
         public bool Contains(Vector2f point)
         {
-            Vector2f differenceBR = point - (Vector2f)Program.window.Size *0.5f - this.size - this.offset;
-            Vector2f differenceTL = point - (Vector2f)Program.window.Size * 0.5f + this.size - this.offset;
+            Vector2f differenceBR = point - (Vector2f)Program.window.Size *0.5f - this.size * 0.5f - this.offset;
+            Vector2f differenceTL = point - (Vector2f)Program.window.Size * 0.5f + this.size * 0.5f - this.offset;
             if (differenceBR.X < 0 && differenceBR.Y < 0 && differenceTL.X > 0 && differenceTL.Y > 0)
                 return true;
             return false;
