@@ -4,7 +4,6 @@ using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
 using static SFML.Window.Mouse;
 using System.Xml.Linq;
@@ -16,7 +15,6 @@ namespace BoringGame
     {
 
         public static List<Popup> popups = new List<Popup>();
-
 
         //public static void Click(Vector2f mousePos)
         //{
@@ -69,17 +67,17 @@ namespace BoringGame
             offset = off;
         }
 
-        public bool CheckClick(Vector2f mousePos)
+        public ScreenButton CheckClick(Vector2f mousePos)
         {
             foreach (IScreenElement element in elements)
-                if (element is ScreenButton button && button.active)
+                if (element is ScreenButton button && button.active && button.Contains(mousePos)) //TEMP TODO is button.active needed?
                     //{
 
                     //    renderwindow window = program.window;
                     //    return ((screenbutton)element).rectangle.getglobalbounds().contains(window.mappixeltocoords(mouse.getposition(window)).x, window.mappixeltocoords(mouse.getposition(window)).y);
                     //}
-                    return button.Contains(mousePos);
-            return false;
+                    return button;
+            return null;
         }
 
         public void Activate()
@@ -125,6 +123,10 @@ namespace BoringGame
         public bool active = false;
 
         public ScreenButton(Vector2f sz, Vector2f off) : base(sz, off)
+        {
+            //Program.window.MouseButtonPressed += window_MouseButtonPressed;
+        }
+        public ScreenButton(Vector2f sz, Vector2f off, Color colour) : base(sz, off,colour)
         {
             //Program.window.MouseButtonPressed += window_MouseButtonPressed;
         }
@@ -174,15 +176,19 @@ namespace BoringGame
         public ScreenSquare(Vector2f sz, Vector2f off)
         {
             offset = off;
-
             size = sz;
-
-            rectangle = TextManager.GetCenteredRectangle2(size, off, SFML.Graphics.Color.Cyan);
+            rectangle = TextManager.GetCenteredRectangle2(size, off, Color.Blue);
+        }
+        public ScreenSquare(Vector2f sz, Vector2f off, Color colour)
+        {
+            offset = off;
+            size = sz;
+            rectangle = TextManager.GetCenteredRectangle2(size, off,colour);
         }
 
         public void UpdatePosition(View view, Vector2f off)
         {
-            TextManager.UpdateCenteredRectangle(rectangle, size, view.Center + offset + off, SFML.Graphics.Color.Cyan);
+            TextManager.UpdateCenteredRectangle(rectangle, size, view.Center + offset + off, rectangle.FillColor);
         }
 
         public void DrawElement(RenderWindow window)
@@ -208,7 +214,7 @@ namespace BoringGame
         public ScreenText(string strng, Vector2f off)
         {
             text = new Text(strng, TextManager.arial, 12);
-            text.Origin = new Vector2f(text.GetLocalBounds().Width * 0.5f, text.GetLocalBounds().Height * 0.5f);
+            text.Origin = new Vector2f(text.GetLocalBounds().Width * 0.5f, text.GetLocalBounds().Height);
 
             offset = off;
 

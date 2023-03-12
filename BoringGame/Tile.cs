@@ -82,7 +82,7 @@ namespace BoringGame
         {
             health -= power;
 
-            if(health <= 0)
+            if(type!= TileType.Empty && health <= 0)
             {
                 int indexLoc = map.CoordsToIndex(this.sprite.Position.X, 0).X;
                 this.SetType(TileType.Empty);

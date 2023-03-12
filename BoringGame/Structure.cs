@@ -38,7 +38,7 @@ namespace BoringGame
             weight = 1000;
 
             //TEMP making a crafter
-            if(id == 100)
+            if(id == 100) //"furnace"
             {
                 crafter = new Crafter();
                 crafter.SetRecipe(Craft.GetRecipe(1));
@@ -87,6 +87,8 @@ namespace BoringGame
 
         public static new GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore, int id)
         {
+            if (bore == null)
+                return null;
             Vector2i pos = bore.FindClosestSupportedSlot(mousePos);
             if (pos.X != -1)
             {

@@ -1,8 +1,10 @@
 ﻿using Microsoft.VisualBasic;
 using SFML.Graphics;
 using SFML.System;
+using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -322,6 +324,9 @@ namespace BoringGame
     {
         public float hardness;
         public static float drillPower = 0.1f;
+
+        public Contents content; //TEMP contents
+        public Text tooltip;
         public Drillhead(float x, float y, Axle connectingAxle, OrthSlot side) : base(x, y)
         {
             //drillPower = 0.1f;
@@ -330,7 +335,19 @@ namespace BoringGame
             connectingAxle.Right = this;
             connectingAxle.rightOpen = false;
             this.SetX(GetX() + Structure.structureSize);
-        }        
+
+            content = new Contents(); //TEMP contents
+            tooltip = TextManager.AddText("", new Vector2f(0, 0),Color.Blue);
+            Program.window.MouseButtonPressed += window_MouseButtonPressed;
+
+        }
+
+        public override void Update(float dt)
+        {
+            tooltip.DisplayedString = content.ToString();
+            tooltip.Position = new Vector2f(this.GetX()- 0.3f*  Structure.structureSize, this.GetY() - 10f);
+            base.Update(dt);
+        }
         public override float CollisionCheckRightN(float dx, Map map)
         {
 
@@ -340,7 +357,7 @@ namespace BoringGame
 
             if (tile.minable)
             {
-                tile.Mine(drillPower, map); //TODO: drilling power needs to be a function of dt
+                content.Add(tile.Mine(drillPower, map)); //TODO: drilling power needs to be a function of dt
             }
 
             if (tile.minable && !tile.passable)
@@ -352,6 +369,18 @@ namespace BoringGame
                 return Math.Max(0f, tile.sprite.Position.X - GetX() - map.tileSize / 2 - this.GetSprite().Texture.Size.X / 2);
 
             return dx;
+        }
+
+        private void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+        {
+            Vector2f mousePos = Program.GetMouse();
+            if (GetSprite().GetGlobalBounds().Contains(mousePos.X, mousePos.Y))
+            {
+                Program.player.inventory.ReceiveItem(content.items);
+                content.items.Clear();
+            }
+
+
         }
         public static new Axle Place(Axle connectingAxle, Map map, OrthSlot side)
         {

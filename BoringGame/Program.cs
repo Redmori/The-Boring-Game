@@ -44,6 +44,16 @@ namespace BoringGame
 
         public static bool mousePressed = false;
 
+        public static InputState inputState = InputState.Game;
+        public enum InputState
+        {
+            Game,
+            Quitting,
+            Building,
+        }
+        public static ScreenText stateText;
+
+
         static void Main(string[] args)
         {
             window = new RenderWindow(new VideoMode(windowWidth, windowHeight), "The Boring Game", Styles.Default, context);
@@ -82,6 +92,10 @@ namespace BoringGame
 
             //initialize texts
             uitexts = new List<UIText>();
+
+            stateText = new ScreenText("", new Vector2f(0, 0));
+            stateText.text.Color = Color.Cyan;
+            stateText.text.CharacterSize = 50;
 
             Font arial = new Font("../../../Content/ArialCEMTBlack.ttf");
             //Text exampleText = new Text("| 1 Cart | 2 Ladder | 3 Platform | 4 Drill | 5 Furnace | 6 Axle | 7 Motor | 8 Drillhead | 9 Cog |", arial);
@@ -176,7 +190,7 @@ namespace BoringGame
                     //}
                 }
 
-                //click on a structure
+                //click on a crafter structure
                 if (bore?.StructureAtIndex((Vector2i)(bore?.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)))))?.crafter is Crafter clickedCrafter)
                 {
                     List<Item> loot = clickedCrafter.Loot();
@@ -317,6 +331,9 @@ namespace BoringGame
             //Draw building indicator
             Build.DrawBuildingSprite(window);
 
+            //Draw state text
+            stateText.UpdatePosition(view, new Vector2f(0, 0));    
+            stateText.DrawElement(window);
 
             //Draw the cursor
             mouse_sprite.Position = window.MapPixelToCoords(Mouse.GetPosition(window));
@@ -355,6 +372,10 @@ namespace BoringGame
             }
         }
 
+        public static Vector2f GetMouse()
+        {
+            return Program.window.MapPixelToCoords(Mouse.GetPosition(Program.window));
+        }
         public static float GetMouseX()
         {
             return Mouse.GetPosition(window).X;
@@ -393,6 +414,8 @@ namespace BoringGame
             bool clicked = false;
             if(!clicked)
             _ = player.inventory.CheckClick(new Vector2f(Mouse.GetPosition(window).X, Mouse.GetPosition(window).Y));
+
+            inputState = InputState.Game;
         }
 
         static void window_KeyReleased(object sender, KeyEventArgs e)
@@ -403,8 +426,19 @@ namespace BoringGame
         {
             if (e.Code == Keyboard.Key.Escape)
             {
-                if(!Build.building)
-                        window.Close();
+                if (inputState == InputState.Quitting)
+                    window.Close();
+                if (!Build.building)
+                {
+                    stateText.text.DisplayedString = "Quit?";
+                    stateText.text.Origin = new Vector2f(stateText.text.GetLocalBounds().Width * 0.5f, 0);
+                    inputState = InputState.Quitting;
+                }
+            }
+            else
+            {
+                inputState = InputState.Game;
+                stateText.text.DisplayedString = "";
             }
             if (e.Code == Keyboard.Key.Space)
             {

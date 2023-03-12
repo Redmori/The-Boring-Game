@@ -15,8 +15,16 @@ namespace BoringGame
         public static int recipesInfoDuration = 1; public static int recipesInfoName = 2; public static int recipesInfoInput = 3; public static int recipesInfoOutput = 4;
         public static Dictionary<int, object[]> recipesInfo = new Dictionary<int, object[]>
         {
-            //ID                  temp        duratio      name               input                                      output
-            { 1, new object[] { "temp"        ,1f    ,"Burner Furnace"        ,new Item[] { new Item(1001, 5) }       ,new Item[] { new Item(1002, 1) }, } },
+            //ID                     temp        duration   name               input                                      output
+            { 1, new object[] {     "temp"        ,1f    ,"Iron"            ,new Item[] { new Item(1001, 5) }         ,new Item[] { new Item(1002, 1) }, } },
+            { 100, new object[] {   "temp"        ,1f    ,"Burner Furnace"  ,new Item[] { new Item(1002, 5) }         ,new Item[] { new Item(100, 1) }, } },
+            { 200, new object[] {   "temp"        ,1f    , "Cart"           ,new Item[] { new Item(1002, 30) }        ,new Item[] { new Item(200, 1) }, } },
+            { 210, new object[] {   "temp"        ,1f    , "Platform"       ,new Item[] { new Item(1002, 10) }        ,new Item[] { new Item(210, 1) }, } },
+            { 220, new object[] {   "temp"        ,1f    , "Ladder"         ,new Item[] { new Item(1002, 5) }         ,new Item[] { new Item(220, 1) }, } },
+            { 500, new object[] {   "temp"        ,1f    , "Axle"           ,new Item[] { new Item(1002, 2) }         ,new Item[] { new Item(500, 5) }, } },
+            { 510, new object[] {   "temp"        ,1f    , "Cogwheel"       ,new Item[] { new Item(1002, 3) }         ,new Item[] { new Item(510, 2) }, } },
+            { 520, new object[] {   "temp"        ,1f    , "Motor"          ,new Item[] { new Item(1002, 50) }        ,new Item[] { new Item(520, 1) }, } },
+            { 530, new object[] {   "temp"        ,1f    , "Drillhead"      ,new Item[] { new Item(1002, 40) }        ,new Item[] { new Item(530, 1) }, } },
 
         };
 
@@ -207,6 +215,7 @@ namespace BoringGame
 
         public void Add(Item addedItem)
         {
+            if (addedItem == null) return;
             int remaining = addedItem.amount;
             foreach (Item currentItem in items)
             {

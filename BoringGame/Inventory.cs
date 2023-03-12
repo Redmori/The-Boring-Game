@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net.Security;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
@@ -18,54 +19,94 @@ namespace BoringGame
         {
             //ID                   name                  stacksize    weight      power     example bonus info if needed
             { 1001, new object[] { "Dirt"        ,1      ,100        ,0        ,1 } },
-            { 1002, new object[] { "Resource"        ,1      ,100        ,0        ,1 } }
+            { 1002, new object[] { "Iron"        ,1      ,100        ,0        ,1 } }
 
         };
 
 
-        public StructureType[] contents;
-        public Item[] items;
+        //public StructureType[] contents;
+        //public Item[] items;
+        public List<Item> items = new List<Item>(20);
 
         Font arial = new Font("../../../Content/ArialCEMTBlack.ttf");
 
         public Popup popup;
+        public List<Recipe> recipeActions;
+        public List<ScreenButton> recipesButtons;
+
 
         public Inventory()
         {
-            contents = new StructureType[20];
-            contents[0] = StructureType.Cart;
-            contents[1] = StructureType.Ladder;
-            contents[2] = StructureType.Platform;
-            contents[3] = StructureType.Drill;
-            contents[4] = StructureType.Furnace;
-            contents[5] = StructureType.Axle;
-            contents[6] = StructureType.Motor;
-            contents[7] = StructureType.Drillhead;
-            contents[8] = StructureType.Cog;
+            //contents = new StructureType[20];
+            //contents[0] = StructureType.Cart;
+            //contents[1] = StructureType.Ladder;
+            //contents[2] = StructureType.Platform;
+            //contents[3] = StructureType.Drill;
+            //contents[4] = StructureType.Furnace;
+            //contents[5] = StructureType.Axle;
+            //contents[6] = StructureType.Motor;
+            //contents[7] = StructureType.Drillhead;
+            //contents[8] = StructureType.Cog;
 
-            items = new Item[20];
-            items[0] = new Item(200, 10);
-            items[1] = new Item(210, 10);
-            items[2] = new Item(220, 5);
-            items[3] = new Item(100, 5);
-            items[4] = new Item(520, 2);
-            items[5] = new Item(500, 20);
-            items[6] = new Item(510, 30);
-            items[7] = new Item(530, 20);
-            items[8] = new Item(1001, 100);
+            //items = new Item[20];
+            //items[0] = new Item(200, 10);
+            //items[1] = new Item(210, 10);
+            //items[2] = new Item(220, 5);
+            //items[3] = new Item(100, 5);
+            //items[4] = new Item(520, 2);
+            //items[5] = new Item(500, 20);
+            //items[6] = new Item(510, 30);
+            //items[7] = new Item(530, 20);
+            //items[8] = new Item(1001, 100);
+
+            items.Add(new Item(200, 10));
+            items.Add(new Item(210, 10));
+            items.Add(new Item(220, 5));
+            items.Add(new Item(100, 5));
+            items.Add(new Item(520, 2));
+            items.Add(new Item(500, 20));
+            items.Add(new Item(510, 30));
+            items.Add(new Item(530, 20));
+            items.Add(new Item(1001, 100));
+
 
             popup = new Popup();
-            ScreenSquare rect = new ScreenButton(new Vector2f(300, 250), new Vector2f(0, 0));
-            popup.elements.Add(rect);
+            recipeActions = new List<Recipe>();
+            recipesButtons = new List<ScreenButton>();
+
+            ScreenSquare box = new ScreenSquare(new Vector2f(400,500), new Vector2f(0, 0), new Color(120,120,130));
+            popup.elements.Add(box);
+            // loop over these to get all recipes. (or only obtained recipes?)
+            int i = 0;
+            foreach (KeyValuePair<int, object[]> kvp in Craft.recipesInfo)
+            {
+                Vector2f offset = new Vector2f(0, -4 * 50f + i * 50f);
+                Recipe newRecipe = Craft.GetRecipe(kvp.Key);
+                ScreenButton rect = new ScreenButton(new Vector2f(300, 30), offset, new Color(50,50,80));
+                popup.elements.Add(rect);
+                ScreenText txt = new ScreenText((string)Craft.recipesInfo[kvp.Key][2], offset);
+                popup.elements.Add(txt);
+                recipeActions.Add(newRecipe);
+                recipesButtons.Add(rect);
+                i++;
+            }
 
         }
 
         public bool CheckClick(Vector2f mousePos)
         {
-            if (popup.CheckClick(mousePos))
+            if (popup.CheckClick(mousePos) is ScreenButton button && button != null)
             {
-                //TODO, perform action based on click here?
-                Console.WriteLine("inventory clicked");
+                //perform action based on click here
+                Recipe action = recipeActions[recipesButtons.IndexOf(button)];
+                Console.WriteLine(action.ToString());
+
+                if (Enough(action.input))
+                {
+                    ConsumeItem(action.input);
+                    ReceiveItem(action.output);
+                }
+
                 return true;
             }
          
@@ -139,54 +180,83 @@ namespace BoringGame
             Build.building = false;
             SpriteManager.ResetBuilding();
         }
+        public void ReceiveItem(Item[] items)
+        {
+            foreach (Item item in items)
+                ReceiveItem(item);
+        }
 
+        public void ReceiveItem(List<Item> items)
+        {
+            foreach (Item item in items)
+                ReceiveItem(item);
+        }
         public void ReceiveItem(Item item)
         {
             if(item == null) return;
-            for (int i = 0; i < items.Length; i++)
+            foreach(Item checkItem in items)
             {
-                if (items[i] == null) continue;
-                if (items[i].id == item.id)
+                if (checkItem.id == item.id)
                 {
-                    items[i].amount += item.amount;
+                    checkItem.amount += item.amount;
                     return;
                 }
             }
-            for (int i = 0; i < items.Length; i++)
-            {
-                if (items[i] == null)
-                {
-                    items[i] = item;
-                    break;
-                }
-            }
+            items.Add(new Item( item.id, item.amount));
+        }
+        public void ConsumeItem(Item[] items)
+        {
+            foreach (Item item in items)
+                ConsumeItem(item);
         }
         public Item ConsumeItem(Item item)
         {
             int returnAmount = 0;
-            for(int i = 0; i < items.Length; i++)
+            List<Item> removeItems = new List<Item>();
+            foreach (Item checkItem in items)
             {
-                if (items[i] == null) continue;
-                if (items[i].id == item.id)
+                if (checkItem.id == item.id)
                 {
-                    returnAmount += items[i].amount;
-                    items[i].amount -= item.amount;
-                    if (items[i].amount <= 0) items[i] = null;
+                    returnAmount += checkItem.amount;
+                    checkItem.amount -= item.amount;
+                    if (checkItem.amount <= 0) removeItems.Add(checkItem); //removing in loop?
                 }
             }
+            foreach(Item checkItem in removeItems)
+                items.Remove(checkItem);
+
             if (returnAmount > item.amount) returnAmount = item.amount;
 
             return new Item(item.id, returnAmount);
         }
 
+        public bool Enough(Item[] checkItems)
+        {
+            for (int i = 0; i < checkItems.Count(); i++)
+            {
+                Item checkItem = checkItems[i];
+                int amount = checkItem.amount;
+                foreach (Item item in items)
+
+                    if (item.id == checkItem.id)
+                        amount -= item.amount;
+                if (amount > 0) return false;
+
+            }
+            return true;
+        }
+
         public void DrawInventory(RenderWindow window, View view) //TODO this can probably be improved to not make a new text every frame
         {
-            for (int i = 0; i < items.Length; i++)
+            ScreenSquare box = new ScreenSquare(new Vector2f(380, 400), new Vector2f(-Program.windowWidth / 2 + 50, 200), new Color(100,100,100));
+            box.UpdatePosition(window.GetView(), new Vector2f(0,0));
+            box.DrawElement(window);
+            for (int i = 0; i < items.Count; i++)
             {
                 if (items[i] == null)
                     continue;
                 Text newtext = new Text($"{i+1} - {items[i].toString()}", arial,19);
-                newtext.Color = new Color(0, 102, 0);
+                newtext.Color = Color.White;
                 UIText text = new UIText(newtext, new Vector2f(-Program.windowWidth/2, i * 20f)) ;
 
                 text.UpdatePosition(view.Center);

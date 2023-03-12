@@ -25,6 +25,12 @@ namespace BoringGame
                 shape.Draw((RenderTarget)window, RenderStates.Default);
         }
 
+        public static Text AddText(string strng, Vector2f pos, Color colour)
+        {
+            Text newText = AddText(strng, pos);
+            newText.Color = colour;
+            return newText;
+        }
         public static Text AddText(string strng, Vector2f pos)
         {
             Text text = new Text(strng, arial, 12);
