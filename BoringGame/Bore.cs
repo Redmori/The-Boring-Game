@@ -12,6 +12,7 @@ namespace BoringGame
     {
         Open,
         Supported,
+        SupportedPlatform,
         Blocked
     }
 
@@ -71,7 +72,7 @@ namespace BoringGame
             {
                 for (int j = 0; j < slotStatus.GetLength(1); j++)
                 {
-                    if (slotStatus[i, j] == SlotStatus.Supported)
+                    if (slotStatus[i, j] == SlotStatus.Supported || slotStatus[i, j] == SlotStatus.SupportedPlatform )
                     {
                         Vector2f coords = IndextoCoords(new Vector2i(i, j));
                         float dist = (coords.X - pos.X) * (coords.X - pos.X) + (coords.Y - pos.Y) * (coords.Y - pos.Y);
@@ -91,11 +92,41 @@ namespace BoringGame
         public void AddStructure(Structure structure, int x, int y)
         {
             slotStatus[x, y] = SlotStatus.Blocked;
-            if(slotStatus[x, y + 1] != SlotStatus.Blocked)
+            if(slotStatus[x, y + 1] != SlotStatus.Blocked && slotStatus[x, y + 1] != SlotStatus.SupportedPlatform)
                 slotStatus[x, y + 1] = SlotStatus.Supported;
             structureMap[x, y] = structure;
             if (!structures.Contains(structure))
                 structures.Add(structure);
+        }
+
+        public bool RemoveStructure(Vector2i index)
+        {
+            int nPlatforms = ((Cart)structureMap[index.X, 0]).platforms.Count + 1; //TEMP check to see if structure above is supported by a platform
+            bool supported = false;
+            for (int i = 0; i < nPlatforms; i++)
+            {
+                if((1 + 2*i) == index.Y - 2)
+                    supported = true;
+            }
+            if (slotStatus[index.X, index.Y - 2] == SlotStatus.Blocked && !supported)
+            {
+                SoundManager.PlayErrorSound();
+                return false;
+            }
+
+            if (slotStatus[index.X, index.Y - 2] == SlotStatus.Supported)
+            {
+                slotStatus[index.X, index.Y - 2] = SlotStatus.Open;
+            }
+            slotStatus[index.X, index.Y - 3] = SlotStatus.Supported;
+
+            Structure removeStructure = structureMap[index.X, index.Y - 3];
+            structures.Remove(removeStructure);
+            removeStructure.Destroy();
+            structureMap[index.X, index.Y - 3] = null;
+
+
+            return true;
         }
 
         public void AddPlatform(Cart cart)
@@ -105,7 +136,7 @@ namespace BoringGame
                 int nPlatforms = cart.platforms.Count + 1; //Calculates the hight we need to place, since there are already platforms
                 if(structureMap[i, 0] == cart && slotStatus[i,1 + 2* nPlatforms] != SlotStatus.Blocked)
                 {
-                    slotStatus[i, 1 + 2* nPlatforms] = SlotStatus.Supported;
+                    slotStatus[i, 1 + 2* nPlatforms] = SlotStatus.SupportedPlatform;
                 }
             }
         }

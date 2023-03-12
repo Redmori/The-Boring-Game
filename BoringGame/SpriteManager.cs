@@ -165,9 +165,7 @@ namespace BoringGame
         public static void Build(GameObject newBuild)
         {
             newBuild.SetSprite(buildingSprite);
-            Console.WriteLine("1");
             buildingSprite.Color = new Color(255, 255, 255, 255);
-            Console.WriteLine("2");
             ResetBuilding();
         }
 

@@ -28,6 +28,7 @@ namespace BoringGame
     {
         public static float structureSize = 50f;
 
+        public int id;
         public float weight;
 
         public Crafter crafter; //TEMP crafter
@@ -35,6 +36,7 @@ namespace BoringGame
 
         public Structure(float x, float y, int id) : base(x, y)
         {
+            this.id = id;
             weight = 1000;
 
             //TEMP making a crafter
@@ -83,6 +85,11 @@ namespace BoringGame
                 return Math.Max(0f, tile.sprite.Position.X - map.tileSize / 2 - rightX);
 
             return dx;
+        }
+
+        public virtual void Destroy()
+        {
+            functionality?.Destroy();
         }
 
         public static new GameObject UpdateBuilding(Vector2f mousePos, Map map, Bore bore, int id)

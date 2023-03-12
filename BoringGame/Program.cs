@@ -193,6 +193,7 @@ namespace BoringGame
                 //click on a crafter structure
                 if (bore?.StructureAtIndex((Vector2i)(bore?.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)))))?.crafter is Crafter clickedCrafter)
                 {
+                    Console.WriteLine("crafter " + (Vector2i)(bore?.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)))));
                     List<Item> loot = clickedCrafter.Loot();
                     clickedCrafter.AddInput(player.inventory.ConsumeItem(new Item(1001, 1))); //TEMP hardcoded to remove 1 dirt from inventory and put in crafter
                     if (loot != null)
@@ -203,6 +204,23 @@ namespace BoringGame
                 }
 
 
+            }
+            if (Mouse.IsButtonPressed(Mouse.Button.Right)) //Destroying structures
+            {
+                Vector2i indexLoc = map.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)).X, window.MapPixelToCoords(Mouse.GetPosition(window)).Y);
+                if (bore != null) { 
+                    Vector2i index = (Vector2i)(bore?.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window))));
+                    if (bore?.StructureAtIndex(index) is Structure structDestroy)
+                    {
+                        //TODO, put this all in a Destroy() method of the structure?
+                        if (bore.RemoveStructure(index))
+                        {
+                            player.inventory.ReceiveItem(new Item(structDestroy.id, 1));
+                            gameObjects.Remove(structDestroy);
+                        }
+
+                    }
+                }
             }
 
             ////Place Cart TEMP

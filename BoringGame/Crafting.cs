@@ -46,7 +46,7 @@ namespace BoringGame
         public Text tooltip;
         //RectangleShape progressBar;
         //RectangleShape progressFill;
-        VertexArray progressBar = TextManager.GetCenteredRectangle(new Vector2f(100, 20), new Vector2f(0, 0), Color.Cyan);
+        VertexArray progressBar;
 
         public Crafter()
         {
@@ -162,6 +162,13 @@ namespace BoringGame
         {
             tooltip.DisplayedString = TooltipString();
         }
+
+        public void Destroy()
+        {
+            TextManager.RemoveText(tooltip);
+            TextManager.RemoveRectangle(progressBar);
+        }
+
         public string TooltipString()
         {
             return $"{input.ToString()}\n{output.ToString()}";
@@ -170,6 +177,7 @@ namespace BoringGame
 
     public interface IStructureFunctionality
     {
+        void Destroy();
         void Update(float dt, Vector2f pos);
 
     }

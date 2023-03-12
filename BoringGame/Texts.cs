@@ -22,7 +22,9 @@ namespace BoringGame
                 text.Draw((RenderTarget)window, RenderStates.Default);
             }
             foreach (VertexArray shape in shapes)
+            {
                 shape.Draw((RenderTarget)window, RenderStates.Default);
+            }
         }
 
         public static Text AddText(string strng, Vector2f pos, Color colour)
@@ -38,6 +40,11 @@ namespace BoringGame
             text.Position = pos;
             texts.Add(text);
             return text;
+        }
+
+        public static void RemoveText(Text txt)
+        {
+            texts.Remove(txt);
         }
 
         //public static void AddProgressBar(RectangleShape shape)
@@ -88,6 +95,7 @@ namespace BoringGame
         }
         public static void AddRectangle(VertexArray rect)
         {
+            if(shapes.Contains(rect)) return;
             shapes.Add(rect);
         }
         public static void RemoveRectangle(VertexArray rect)
