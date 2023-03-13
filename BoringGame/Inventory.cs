@@ -106,6 +106,8 @@ namespace BoringGame
                     ConsumeItem(action.input);
                     ReceiveItem(action.output);
                 }
+                else
+                    SoundManager.PlayErrorSound();
 
                 return true;
             }

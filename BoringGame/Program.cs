@@ -210,7 +210,7 @@ namespace BoringGame
                 Vector2i indexLoc = map.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)).X, window.MapPixelToCoords(Mouse.GetPosition(window)).Y);
                 if (bore != null) { 
                     Vector2i index = (Vector2i)(bore?.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window))));
-                    if (bore?.StructureAtIndex(index) is Structure structDestroy)
+                    if (bore?.StructureAtIndex(index) is Structure structDestroy && !(structDestroy is Cart))
                     {
                         //TODO, put this all in a Destroy() method of the structure?
                         if (bore.RemoveStructure(index))
