@@ -23,7 +23,9 @@ namespace BoringGame
             { 500, new object[] { typeof(Axle),        StructureType.Axle       ,"Axle"                  ,2      ,30         ,0        ,true, 6} },
             { 510, new object[] { typeof(Cog),         StructureType.Cog        ,"Cogwheel"              ,2      ,30         ,0        ,true, 6} },
             { 520, new object[] { typeof(Motor),       StructureType.Motor      ,"Motor"                 ,2      ,30         ,0        ,true, 6} },
-            { 530, new object[] { typeof(Drillhead),   StructureType.Drillhead  ,"Drillhead"             ,2      ,30         ,0        ,true, 6} }
+            { 530, new object[] { typeof(Drillhead),   StructureType.Drillhead  ,"Drillhead"             ,2      ,30         ,0        ,true, 6} },
+            { 600, new object[] { typeof(Structure),   StructureType.Conveyor   ,"Conveyor"              ,2      ,30         ,0.01     ,true, 6} }
+
 
         };
 

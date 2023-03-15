@@ -29,6 +29,7 @@ namespace BoringGame
         public static Texture motor_tex = new Texture(path + "Motor.png");
         public static Texture drillhead_tex = new Texture(path + "Drillhead.png");
         public static Texture cog_tex = new Texture(path + "Cog.png");
+        public static Texture conveyor_tex = new Texture(path + "Conveyor.png");
 
         public static Texture test_tex = new Texture(path + "testtileset.png");
 
@@ -45,28 +46,28 @@ namespace BoringGame
             switch (type)
             {
                 case StructureType.Cart:
-                {
+                    {
                         structSprite = new Sprite(cart_tex);
-                        structSprite.Origin = new Vector2f(3*structSprite.Texture.Size.X / 4f, structSprite.Texture.Size.Y / 2f);
+                        structSprite.Origin = new Vector2f(3 * structSprite.Texture.Size.X / 4f, structSprite.Texture.Size.Y / 2f);
                         break;
-                }
+                    }
                 case StructureType.Platform:
                     {
                         structSprite = new Sprite(platform_tex);
                         structSprite.Origin = new Vector2f(3 * structSprite.Texture.Size.X / 4f, 1 * structSprite.Texture.Size.Y / 4f);
                         break;
-                }
+                    }
                 case StructureType.Ladder:
                     {
                         structSprite = new Sprite(ladder_tex);
-                        structSprite.Origin = new Vector2f(structSprite.Texture.Size.X / 2f, 3* structSprite.Texture.Size.Y / 4f);
+                        structSprite.Origin = new Vector2f(structSprite.Texture.Size.X / 2f, 3 * structSprite.Texture.Size.Y / 4f);
                         break;
-                }
+                    }
                 case StructureType.Drill:
                     {
-                            structSprite = new Sprite(drill_tex);
-                            structSprite.Origin = new Vector2f(structSprite.Texture.Size.X / 4f, structSprite.Texture.Size.Y / 2f);
-                            break;
+                        structSprite = new Sprite(drill_tex);
+                        structSprite.Origin = new Vector2f(structSprite.Texture.Size.X / 4f, structSprite.Texture.Size.Y / 2f);
+                        break;
                     }
                 case StructureType.Furnace:
                     {
@@ -91,6 +92,11 @@ namespace BoringGame
                 case StructureType.Cog:
                     {
                         structSprite = new Sprite(cog_tex);
+                        break;
+                    }
+                case StructureType.Conveyor:
+                    {
+                        structSprite = new Sprite(conveyor_tex);
                         break;
                     }
             }

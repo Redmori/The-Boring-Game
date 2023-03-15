@@ -20,6 +20,7 @@ namespace BoringGame
         Drillhead,
         Cog,
         Structure,
+        Conveyor,
 
         Count
     }
@@ -31,8 +32,9 @@ namespace BoringGame
         public int id;
         public float weight;
 
-        public Crafter crafter; //TEMP crafter
+        public Crafter crafter; //TEMP crafter, not needed anymore?
         public IStructureFunctionality functionality; //The functionality of this structure, i.e. crafter
+        public Itransport transport;
 
         public Structure(float x, float y, int id) : base(x, y)
         {
@@ -46,6 +48,15 @@ namespace BoringGame
                 crafter.SetRecipe(Craft.GetRecipe(1));
                 crafter.AddInput(new Item(1001, 50));
                 functionality = crafter;
+                transport = crafter;
+            }
+            if(id == 600) //conveyor
+            {
+                Vector2i index = Program.bore.CoordsToIndex(new Vector2f(x, y));// + new Vector2i(0,-3);
+                Itransport right = Program.bore.StructureAtIndex(index + new Vector2i(1,0))?.transport;
+                Itransport left = Program.bore.StructureAtIndex(index - new Vector2i(1,0))?.transport;
+                functionality = new Conveyor(600, right, left);
+                transport = (Itransport)functionality;
             }
         }
 

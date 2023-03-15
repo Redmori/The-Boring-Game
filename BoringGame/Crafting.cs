@@ -34,7 +34,7 @@ namespace BoringGame
         }
     }
 
-    public class Crafter : IStructureFunctionality
+    public class Crafter : IStructureFunctionality, Itransport
     {
         public Recipe recipe;
         public Contents input;
@@ -133,7 +133,7 @@ namespace BoringGame
         {
             if (!isCrafting && input.Enough(recipe.input))
             {
-                Write();
+                //Write();
                 isCrafting = true;
                 input.Remove(recipe.input);
                 UpdateTooltip();
@@ -173,6 +173,25 @@ namespace BoringGame
         {
             return $"{input.ToString()}\n{output.ToString()}";
         }
+
+        public Item Grab()
+        {
+            Item grabItem = output.Grab();
+            UpdateTooltip();
+            return grabItem;//throw new NotImplementedException();
+        }
+
+        public void Receive(Item item)
+        {
+            AddInput(item);
+            //throw new NotImplementedException();
+        }
+
+        public bool HasRoom(Item item)
+        {
+            return true; //TODO: implement
+                //throw new NotImplementedException();
+        }
     }
 
     public interface IStructureFunctionality
@@ -211,7 +230,7 @@ namespace BoringGame
         }
     }
 
-    public class Contents
+    public class Contents : Itransport
     {
 
         public List<Item> items;
@@ -307,6 +326,29 @@ namespace BoringGame
                 sb.Append($"{item.toString()} ");
             }
             return sb.ToString();
+        }
+
+        public Item Grab()
+        {
+            //throw new NotImplementedException();
+            if(items.Count == 0) return null;
+
+            Item firstItem = items.FirstOrDefault();
+            Item grabItem = new Item(firstItem.id, 1);
+            Remove(grabItem);
+            return grabItem;
+        }
+
+        public void Receive(Item item)
+        {
+            Add(item);
+            //throw new NotImplementedException();
+        }
+
+        public bool HasRoom(Item item)
+        {
+            return true; //TODO implement
+            //throw new NotImplementedException();
         }
     }
 }

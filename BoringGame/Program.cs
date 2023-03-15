@@ -193,7 +193,7 @@ namespace BoringGame
                 //click on a crafter structure
                 if (bore?.StructureAtIndex((Vector2i)(bore?.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)))))?.crafter is Crafter clickedCrafter)
                 {
-                    Console.WriteLine("crafter " + (Vector2i)(bore?.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)))));
+                    //Console.WriteLine("crafter " + (Vector2i)(bore?.CoordsToIndex(window.MapPixelToCoords(Mouse.GetPosition(window)))));
                     List<Item> loot = clickedCrafter.Loot();
                     clickedCrafter.AddInput(player.inventory.ConsumeItem(new Item(1001, 1))); //TEMP hardcoded to remove 1 dirt from inventory and put in crafter
                     if (loot != null)

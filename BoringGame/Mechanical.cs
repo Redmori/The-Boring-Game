@@ -327,6 +327,8 @@ namespace BoringGame
 
         public Contents content; //TEMP contents
         public Text tooltip;
+
+        public Itransport transport;
         public Drillhead(float x, float y, Axle connectingAxle, OrthSlot side) : base(x, y)
         {
             //drillPower = 0.1f;
@@ -337,6 +339,7 @@ namespace BoringGame
             this.SetX(GetX() + Structure.structureSize);
 
             content = new Contents(); //TEMP contents
+            transport = content;
             tooltip = TextManager.AddText("", new Vector2f(0, 0),Color.Blue);
             Program.window.MouseButtonPressed += window_MouseButtonPressed;
 

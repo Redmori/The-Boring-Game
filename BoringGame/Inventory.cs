@@ -67,6 +67,7 @@ namespace BoringGame
             items.Add(new Item(500, 20));
             items.Add(new Item(510, 30));
             items.Add(new Item(530, 20));
+            items.Add(new Item(600, 5));
             items.Add(new Item(1001, 100));
 
 
