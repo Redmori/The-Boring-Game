@@ -324,7 +324,7 @@ namespace BoringGame
             //Draw the GameObjects
             foreach (GameObject gameObject in gameObjects)
             {
-                gameObject.GetSprite().Draw(window, RenderStates.Default);
+                gameObject.Draw(window);
             }
 
             //Draw the player

@@ -23,26 +23,26 @@ namespace BoringGame
         {
             items = new List<Oitem>();
             conveyorSpeed = 0.3f; // (float)Build.info[id][5]; //5 = conveyor speed information?
-            connectionIn = left;    
-            connectionOut = right;
+            connectionIn = right;    
+            connectionOut = left;
 
         }
-        public void Update(float dt, Vector2f something) //what we use the vector2f for?
+        public void Update(float dt, Vector2f pos) //what we use the vector2f for?
         {
-            MoveItems(dt);
+            MoveItems(dt,pos);
 
             //attempt to grab from input
             if ( !items.Any() || (items.Any() && items.Last().relativePosition >= itemDistance))
             {
                 //Console.WriteLine(connectionIn.ToString());
-                Item grabItem = connectionIn.Grab();
+                Item grabItem = connectionIn?.Grab();
                 if (grabItem != null)
                     Receive(grabItem);
             }
 
         }
 
-        public void MoveItems(float dt)
+        public void MoveItems(float dt, Vector2f pos)
         {
             if (items.Count == 0) return;
             //Moving of items on the belt
@@ -66,7 +66,6 @@ namespace BoringGame
                     item.relativePosition = prevItem.relativePosition - itemDistance; //set the item position to the correct spot relative to the item in front
 
                 prevItem = item;
-
             }
         }
         public void Destroy()
@@ -94,10 +93,13 @@ namespace BoringGame
                 newItem.relativePosition = 0;
             items.Add(newItem); //add the item to the list
 
+            newItem.sprite = SpriteManager.GetItemSprite();
+
+
         }
         public bool Push(Oitem pushItem)
         {
-            if (!connectionOut.HasRoom(pushItem.item)) return false;
+            if (connectionOut == null || !connectionOut.HasRoom(pushItem.item)) return false;
 
             connectionOut.Receive(pushItem.item);
             items.Remove(pushItem);
@@ -106,7 +108,16 @@ namespace BoringGame
         }
         public bool HasRoom(Item newItem)
         {
+            if (!items.Any()) return true;
             return (items.Last().relativePosition >= itemDistance);
+        }
+
+        public void Draw(RenderWindow window, Vector2f pos)
+        {
+            foreach(Oitem item in items)
+            {
+                item.DrawItem(window, pos);
+            }
         }
     }
 
@@ -132,13 +143,19 @@ namespace BoringGame
     {
         public Item item;
         public float relativePosition;
-        public GameObject sprite;
+        public Sprite sprite;
 
         public Oitem(Item newItem)
         {
             item = newItem;
             //sprite = SpriteManager.GetSprite(newItem.id);
             relativePosition = 0f;
+        }
+
+        public void DrawItem(RenderWindow window, Vector2f pos)
+        {
+            sprite.Position = pos + new Vector2f(Structure.structureSize *0.5f - relativePosition * Structure.structureSize, 0f);
+            sprite.Draw(window, RenderStates.Default);
         }
     }
 }

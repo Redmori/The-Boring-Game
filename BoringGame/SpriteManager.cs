@@ -33,6 +33,8 @@ namespace BoringGame
 
         public static Texture test_tex = new Texture(path + "testtileset.png");
 
+        public static Texture item_tex = new Texture(path + "item.png");
+
         public static Sprite GetStructureSprite(StructureType type, float x, float y )
         {
             Sprite newSprite = GetStructureSprite(type);
@@ -157,7 +159,12 @@ namespace BoringGame
             return new Sprite(tex, new IntRect(rx * 50, ry* 50, 50, 50));
 
         }
-
+        public static Sprite GetItemSprite()
+        {
+            Sprite itemSprite = new Sprite(item_tex);
+            itemSprite.Origin = new Vector2f(itemSprite.GetLocalBounds().Width * 0.5f, itemSprite.GetLocalBounds().Height * 0.5f);
+            return itemSprite;  
+        }
         public static void StartBuilding(StructureType mode) //todo, replace with id to find correct sprite
         {
             buildingSprite = SpriteManager.GetStructureSprite(mode); //TODO change this to buildingID to have a sprite for each building

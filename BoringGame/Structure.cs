@@ -53,10 +53,21 @@ namespace BoringGame
             if(id == 600) //conveyor
             {
                 Vector2i index = Program.bore.CoordsToIndex(new Vector2f(x, y));// + new Vector2i(0,-3);
-                Itransport right = Program.bore.StructureAtIndex(index + new Vector2i(1,0))?.transport;
-                Itransport left = Program.bore.StructureAtIndex(index - new Vector2i(1,0))?.transport;
+                Itransport left = Program.bore.StructureAtIndex(index + new Vector2i(1,0))?.transport;
+                Itransport right = Program.bore.StructureAtIndex(index - new Vector2i(1,0))?.transport;
                 functionality = new Conveyor(600, right, left);
                 transport = (Itransport)functionality;
+
+                if (left is Conveyor)
+                    ((Conveyor)left).connectionIn = transport;
+                if (right is Conveyor)
+                    ((Conveyor)right).connectionOut = transport;
+            }
+            if(transport != null) //whenever a structure is made, connect it to nearby transport structures. TEMP?
+            {
+                Itransport right = Program.bore.StructureAtIndex(Program.bore.CoordsToIndex(new Vector2f(x, y)) - new Vector2i(1, 0))?.transport;
+                if (right is Conveyor)
+                    ((Conveyor)right).connectionOut = transport;
             }
         }
 
@@ -98,6 +109,11 @@ namespace BoringGame
             return dx;
         }
 
+        public override void Draw(RenderWindow window)
+        {
+            functionality?.Draw(window, new Vector2f(this.GetX(), this.GetY()));
+            base.Draw(window);
+        }
         public virtual void Destroy()
         {
             functionality?.Destroy();

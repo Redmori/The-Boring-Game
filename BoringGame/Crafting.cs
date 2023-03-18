@@ -192,12 +192,18 @@ namespace BoringGame
             return true; //TODO: implement
                 //throw new NotImplementedException();
         }
+
+        public void Draw(RenderWindow window, Vector2f pos)
+        {
+            
+        }
     }
 
     public interface IStructureFunctionality
     {
         void Destroy();
         void Update(float dt, Vector2f pos);
+        void Draw(RenderWindow window, Vector2f pos);
 
     }
 

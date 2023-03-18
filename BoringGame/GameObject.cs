@@ -84,5 +84,10 @@ namespace BoringGame
                 sprite.Position = new Vector2f(x, y);
             }
         }
+
+        public virtual void Draw(RenderWindow window)
+        {
+            sprite.Draw(window, RenderStates.Default);
+        }
     }
 }
