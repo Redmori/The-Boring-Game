@@ -23,6 +23,7 @@ namespace BoringGame
         public List<Structure> structures;
         public float position;
         float speed;
+        public bool isMoving;
 
         public Bore(Cart firstCart)
         {
@@ -32,6 +33,7 @@ namespace BoringGame
             structures = new List<Structure>();
             AddCart(firstCart, 2);
             speed = 50f;
+            isMoving = true;
 
         }
 
@@ -165,7 +167,7 @@ namespace BoringGame
 
             float dx = GetSpeed() * dt;
             dx = CollisionCheckRight(dx, Program.map);
-            Move(dx);
+            if(isMoving) Move(dx);
         }
         public void Move(float dx)
         {

@@ -2,6 +2,7 @@
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -55,6 +56,37 @@ namespace BoringGame
                 Vector2i index = Program.bore.CoordsToIndex(new Vector2f(x, y));// + new Vector2i(0,-3);
                 Itransport left = Program.bore.StructureAtIndex(index + new Vector2i(1,0))?.transport;
                 Itransport right = Program.bore.StructureAtIndex(index - new Vector2i(1,0))?.transport;
+                if (right == null) //check for drills TEMP
+                {
+                    foreach (Axle axle in Program.map.axles)
+                    {
+                        if (axle is Drillhead)
+                        {
+                            Vector2f pos1 = new Vector2f(GetX(), GetY());
+                            Vector2f pos2 = new Vector2f(axle.GetX(), axle.GetY());
+                            float diff = Math.Abs(pos1.X - pos2.X + Structure.structureSize) + Math.Abs(pos1.Y - pos2.Y);
+                            if (diff < Structure.structureSize * 0.1f)
+                            {
+                                right = ((Drillhead)axle).transport; break;
+                            }
+
+                        }
+                    }
+                    if (index.X == 0) { //grab from afar
+                        foreach (Axle axle in Program.map.axles)
+                        {
+                            if (axle is Drillhead)
+                            {
+                                Vector2f pos1 = new Vector2f(GetX(), GetY());
+                                Vector2f pos2 = new Vector2f(axle.GetX(), axle.GetY());
+                                if (Math.Abs(pos1.Y - pos2.Y) < 0.1 * Structure.structureSize)
+                                {
+                                    right = ((Drillhead)axle).transport; break;
+                                }
+                            }
+                        }
+                    }
+                }
                 functionality = new Conveyor(600, right, left);
                 transport = (Itransport)functionality;
 
@@ -65,9 +97,13 @@ namespace BoringGame
             }
             if(transport != null) //whenever a structure is made, connect it to nearby transport structures. TEMP?
             {
-                Itransport right = Program.bore.StructureAtIndex(Program.bore.CoordsToIndex(new Vector2f(x, y)) - new Vector2i(1, 0))?.transport;
+                Vector2i index = Program.bore.CoordsToIndex(new Vector2f(x, y));// + new Vector2i(0,-3);
+                Itransport right = Program.bore.StructureAtIndex(index - new Vector2i(1, 0))?.transport;
                 if (right is Conveyor)
                     ((Conveyor)right).connectionOut = transport;
+                Itransport left = Program.bore.StructureAtIndex(index + new Vector2i(1, 0))?.transport;
+                if (left is Conveyor)
+                    ((Conveyor)left).connectionIn = transport;
             }
         }
 

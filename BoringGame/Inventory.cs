@@ -170,7 +170,8 @@ namespace BoringGame
 
         public void StartBuilding(int hotkey)
         {
-            if (items[hotkey-1] == null) return;
+            if(hotkey > items.Count) return;
+            //if (items[hotkey-1] == null) return;
             Build.buildingId = items[hotkey - 1].id;
             if (!Build.InfoContains(Build.buildingId)) return;
             Build.buildingMode = Build.InfoStructureType(items[hotkey-1].id);

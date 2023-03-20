@@ -241,7 +241,7 @@ namespace BoringGame
                     {
                         dy = Math.Min(dy, platform.GetPlatformY() - GetY() - halfSizeY - 0.001f);
                         //this.SetX(GetX() + platform.previousDX); //TODO collision with player and wall
-                        this.MoveX(CollisionCheckRight(platform.previousDX, map));
+                        if(Program.bore.isMoving) this.MoveX(CollisionCheckRight(platform.previousDX, map));
                     }
                 }
             }

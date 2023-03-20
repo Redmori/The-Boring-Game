@@ -470,6 +470,15 @@ namespace BoringGame
             {
                 UIManager.TogglePopup(player.inventory.popup);
             }
+            if(e.Code == Keyboard.Key.R)
+            {
+                Console.WriteLine("reverse");
+                bore?.Move(-2*Structure.structureSize);
+            }
+            if(e.Code == Keyboard.Key.T)
+            {
+                bore.isMoving = !bore.isMoving;
+            }
         }
         private static void window_Resized(object sender, SizeEventArgs e)
         {

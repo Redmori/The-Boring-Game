@@ -343,6 +343,15 @@ namespace BoringGame
             tooltip = TextManager.AddText("", new Vector2f(0, 0),Color.Blue);
             Program.window.MouseButtonPressed += window_MouseButtonPressed;
 
+            //TEMP check to connect to conveyors
+            Vector2i index = Program.bore.CoordsToIndex(new Vector2f(x, y));// + new Vector2i(0,-3);
+            Itransport left = Program.bore.StructureAtIndex(new Vector2i(0, index.Y))?.transport;
+            Console.WriteLine(new Vector2i(index.X, 0).ToString());
+            if (left is Conveyor)
+            {
+                Console.WriteLine("connected to " + left.ToString());
+                ((Conveyor)left).connectionIn = transport;
+            }
         }
 
         public override void Update(float dt)

@@ -187,9 +187,9 @@ namespace BoringGame
             //throw new NotImplementedException();
         }
 
-        public bool HasRoom(Item item)
+        public float HasRoom(Item item)
         {
-            return true; //TODO: implement
+            return 1f; //TODO: implement
                 //throw new NotImplementedException();
         }
 
@@ -351,9 +351,9 @@ namespace BoringGame
             //throw new NotImplementedException();
         }
 
-        public bool HasRoom(Item item)
+        public float HasRoom(Item item)
         {
-            return true; //TODO implement
+            return 1f; //TODO implement
             //throw new NotImplementedException();
         }
     }

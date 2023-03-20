@@ -17,7 +17,7 @@ namespace BoringGame
         public Itransport connectionIn;
         public Itransport connectionOut;
 
-        public static float itemDistance = 0.25f; //5 items per belt section
+        public static float itemDistance = 0.24f; //5 items per belt section
 
         public Conveyor(int id, Itransport right, Itransport left)
         {
@@ -49,9 +49,21 @@ namespace BoringGame
             float dx = dt * conveyorSpeed;
 
             items.First().relativePosition += dx;
+            //Console.WriteLine("relative pos: " + items.First().relativePosition);
             if (items.First().relativePosition >= 1)
+            {
                 if (!Push(items.First()))    //attempt to push the item, if we cant push
                     items.First().relativePosition = 1; //queue it at the ends
+            }
+            else if (connectionOut != null && items.First().relativePosition >= 1f - itemDistance)
+            {
+                float dist = connectionOut.HasRoom(items.First().item); //check how much room there is on the next belt
+                if (dist < itemDistance && items.First().relativePosition > 1f - dist)
+                {
+                    items.First().relativePosition = 1f - dist; //queue and the space
+                }
+            }
+
 
             if (!items.Any()) return;
             Oitem prevItem = items.First();
@@ -99,17 +111,20 @@ namespace BoringGame
         }
         public bool Push(Oitem pushItem)
         {
-            if (connectionOut == null || !connectionOut.HasRoom(pushItem.item)) return false;
+            if (connectionOut == null || !(connectionOut.HasRoom(pushItem.item) == 1f)) return false;
 
             connectionOut.Receive(pushItem.item);
             items.Remove(pushItem);
             return true;
 
         }
-        public bool HasRoom(Item newItem)
+        public float HasRoom(Item newItem)
         {
-            if (!items.Any()) return true;
-            return (items.Last().relativePosition >= itemDistance);
+            if (!items.Any()) return 1f;
+            if (items.Last().relativePosition >= itemDistance)
+                return 1f;
+            else
+                return itemDistance - items.Last().relativePosition;
         }
 
         public void Draw(RenderWindow window, Vector2f pos)
@@ -135,7 +150,7 @@ namespace BoringGame
         Item Grab();
         //void Push(Oitem itemObject); //do i want this for all transports, or just conveyor belt?
         void Receive(Item item); //method that is ran when you receive a push item
-        bool HasRoom(Item item); //check if there is room
+        float HasRoom(Item item); //check if there is room
     }
 
 
